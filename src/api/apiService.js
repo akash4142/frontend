@@ -1,9 +1,10 @@
 import axiosClient from "./axiosClient";
 
+
 // Fetch Dashboard Stats
 export const getDashboardStats = async () => {
   try {
-    const response = await axiosClient.get("/dashboard");
+    const response = await axiosClient.get("/api/dashboard");
     return response.data;
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
@@ -14,7 +15,7 @@ export const getDashboardStats = async () => {
 
 export const getSuppliers = async () => {
   try {
-    const response = await axiosClient.get("/suppliers");
+    const response = await axiosClient.get("/api/suppliers");
     return response.data;
   } catch (error) {
     console.error("Error fetching suppliers:", error);
@@ -25,7 +26,7 @@ export const getSuppliers = async () => {
 
 export const addProduct = async (newProduct) => {
   try {
-    const response = await axiosClient.post("/products/add", newProduct);
+    const response = await axiosClient.post("/api/products/add", newProduct);
     return response.data;
   } catch (error) {
     console.error("Error adding product:", error.response ? error.response.data : error.message);
@@ -37,7 +38,7 @@ export const addProduct = async (newProduct) => {
 // Fetch All Products
 export const getProducts = async () => {
   try {
-    const response = await axiosClient.get("/products");
+    const response = await axiosClient.get("/api/products");
     return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -48,7 +49,7 @@ export const getProducts = async () => {
 // Fetch All Orders
 export const getOrders = async () => {
   try {
-    const response = await axiosClient.get("/orders");
+    const response = await axiosClient.get("/api/orders");
     return response.data;
   } catch (error) {
     console.error("Error fetching orders:", error);
@@ -67,7 +68,7 @@ export const createOrder = async (orderData) => {
       expectedDelivery: orderData.expectedDelivery, // ✅ Ensure expected delivery is sent
     };
 
-    const response = await axiosClient.post("/orders/create", formattedOrder);
+    const response = await axiosClient.post("/api/orders/create", formattedOrder);
     return response.data;
   } catch (error) {
     console.error("Error creating order:", error.response ? error.response.data : error.message);
@@ -79,7 +80,7 @@ export const createOrder = async (orderData) => {
 // Fetch Stock Data
 export const getStock = async () => {
   try {
-    const response = await axiosClient.get("/stock");
+    const response = await axiosClient.get("/api/stock");
     return response.data;
   } catch (error) {
     console.error("Error fetching stock data:", error);
@@ -90,7 +91,7 @@ export const getStock = async () => {
 
 export const downloadPurchaseOrdersExcel = async () => {
   try {
-    const response = await axiosClient.get("/orders/generate-excel", { responseType: "blob" });
+    const response = await axiosClient.get("/api/orders/generate-excel", { responseType: "blob" });
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
@@ -108,7 +109,7 @@ export const downloadPurchaseOrdersExcel = async () => {
 // Fetch a Single Product by ID
 export const getProductById = async (id) => {
   try {
-    const response = await axiosClient.get(`/products/${id}`);
+    const response = await axiosClient.get(`/api/products/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching product details:", error);
@@ -119,7 +120,7 @@ export const getProductById = async (id) => {
 // Update a Product
 export const updateProduct = async (id, updatedData) => {
   try {
-    const response = await axiosClient.put(`/products/${id}`, updatedData);
+    const response = await axiosClient.put(`/api/products/${id}`, updatedData);
     return response.data;
   } catch (error) {
     console.error("Error updating product:", error);
@@ -130,7 +131,7 @@ export const updateProduct = async (id, updatedData) => {
 // Delete a Product
 export const deleteProduct = async (id) => {
   try {
-    const response = await axiosClient.delete(`/products/${id}`);
+    const response = await axiosClient.delete(`/api/products/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error deleting product:", error);
@@ -140,7 +141,7 @@ export const deleteProduct = async (id) => {
 
 export const updateOrderStatus = async (id, status) => {
   try {
-    const response = await axiosClient.put(`/orders/${id}/status`, { status });
+    const response = await axiosClient.put(`/api/orders/${id}/status`, { status });
     console.log("🔄 Order Updated:", response.data); // Debugging Log
     return response.data;
   } catch (error) {
@@ -152,7 +153,7 @@ export const updateOrderStatus = async (id, status) => {
 
 export const downloadPurchaseOrderPDF = async (id) => {
   try {
-    const response = await axiosClient.get(`/orders/${id}/generate-pdf`, { responseType: "blob" });
+    const response = await axiosClient.get(`/api/orders/${id}/generate-pdf`, { responseType: "blob" });
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
@@ -168,7 +169,7 @@ export const downloadPurchaseOrderPDF = async (id) => {
 
 export const checkPendingPayments = async () => {
   try {
-    const response = await axiosClient.get("/orders/pending-payments");
+    const response = await axiosClient.get("/api/orders/pending-payments");
     return response.data;
   } catch (error) {
     console.error("Error checking pending payments:", error);
@@ -179,7 +180,7 @@ export const checkPendingPayments = async () => {
 
 export const getPurchaseHistory = async () => {
   try {
-    const response = await axiosClient.get("/orders/history");
+    const response = await axiosClient.get("/api/orders/history");
     return response.data;
   } catch (error) {
     console.error("Error fetching purchase history:", error.response ? error.response.data : error.message);
