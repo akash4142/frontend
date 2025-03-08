@@ -47,28 +47,42 @@ export const getProducts = async () => {
 };
 
 // Fetch All Orders
-export const getOrders = async () => {
+// export const getOrders = async () => {
+//   try {
+//     const response = await axiosClient.get("/api/orders");
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching orders:", error);
+//     throw error;
+//   }
+// };
+export const getOrders = async (filters = {}) => {
   try {
-    const response = await axiosClient.get("/api/orders");
+    const params = new URLSearchParams(filters).toString(); // ✅ Convert filters to query string
+    const response = await axiosClient.get(`/api/orders?${params}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching orders:", error);
+    console.error("❌ Error fetching orders:", error.response?.data || error.message);
     throw error;
   }
 };
 
 
+export const sendOrderToProduction = async (orderId) => {
+  try {
+    const response = await axiosClient.post("/api/production/send-to-production", { orderId });
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error sending order to production:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+
+
 export const createOrder = async (orderData) => {
   try {
-    const formattedOrder = {
-      productId: orderData.productId , // ✅ Use existing product or set to null
-      supplier: orderData.supplier || null, // ✅ Use existing supplier or set to null
-      customSupplier: orderData.customSupplier || null, // ✅ Include manually entered supplier
-      quantity: orderData.quantity, // ✅ Correct field name
-      expectedDelivery: orderData.expectedDelivery, // ✅ Ensure expected delivery is sent
-    };
-
-    const response = await axiosClient.post("/api/orders/create", formattedOrder);
+    const response = await axiosClient.post("/api/orders/create", orderData);
     return response.data;
   } catch (error) {
     console.error("Error creating order:", error.response ? error.response.data : error.message);
@@ -187,3 +201,45 @@ export const getPurchaseHistory = async () => {
     throw error;
   }
 };
+
+
+
+// ✅ Fetch all production orders
+export const getProductionOrders = async () => {
+  try {
+    const response = await axiosClient.get("/api/production");
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error fetching production orders:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// ✅ Start production for an order
+export const startProduction = async (orderId, productId, quantity, packagingProcess) => {
+  try {
+    const response = await axiosClient.post("/api/production/start", {
+      orderId,
+      productId,
+      quantity,
+      packagingProcess,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error starting production:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// ✅ Update production status (Move to Packaging, Completed)
+export const updateProductionStatus = async (productionId, status) => {
+  try {
+    const response = await axiosClient.put(`/api/production/${productionId}/status`, { status });
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error updating production status:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+

@@ -81,6 +81,10 @@ const Products = () => {
            <TextField fullWidth label="Quantity Per Master Box" margin="normal" type="number"
             value={newProduct.quantityPerMasterBox} onChange={(e) => setNewProduct({ ...newProduct, quantityPerMasterBox: e.target.value })}
           />
+          <TextField fullWidth type="number" label="Price" margin="normal" value={newProduct.price}
+            onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+          />
+
           <Button variant="contained" color="primary" onClick={handleAddProduct} sx={{ mt: 2 }}>
             Submit
           </Button>
@@ -99,6 +103,7 @@ const Products = () => {
               <TableCell sx={{ color: "white" }}>Production Process</TableCell>
               <TableCell sx={{ color: "white" }}>Packaging</TableCell>
               <TableCell sx={{ color: "white" }}>Actions</TableCell>
+              
             </TableRow>
           </TableHead>
           <TableBody>

@@ -27,9 +27,12 @@ const PurchaseHistory = () => {
       estimatedArrivalDate.setDate(estimatedArrivalDate.getDate() + 7); // ✅ Set estimated delivery to 7 days from today
   
       await createOrder({
-        productId: order.product._id,
-        supplier: order.supplier._id,
-        quantity: order.orderedQuantity,
+        products: order.products.map(p => ({
+          product: p.product?._id || null,
+          quantity: p.quantity,
+        })),
+        supplier: order.supplier?._id || null,
+        customSupplier: order.customSupplier || null,
         expectedDelivery: new Date().toISOString().split("T")[0], // ✅ Order date is today
         estimatedArrival: estimatedArrivalDate.toISOString().split("T")[0], // ✅ Estimated arrival in 7 days
       });
@@ -39,7 +42,6 @@ const PurchaseHistory = () => {
       alert("❌ Failed to reorder. Try again.");
     }
   };
-  
 
   if (loading) return <Typography align="center" sx={{ mt: 4 }}>Loading...</Typography>;
 
@@ -51,20 +53,28 @@ const PurchaseHistory = () => {
         <Table>
           <TableHead sx={{ bgcolor: "#1976D2", color: "white" }}>
             <TableRow>
-              <TableCell sx={{ color: "white" }}>Product</TableCell>
+              <TableCell sx={{ color: "white" }}>Products</TableCell>
               <TableCell sx={{ color: "white" }}>Supplier</TableCell>
-              <TableCell sx={{ color: "white" }}>Quantity</TableCell>
               <TableCell sx={{ color: "white" }}>Order Date</TableCell>
+              <TableCell sx={{ color: "white" }}>Total Quantity</TableCell>
               <TableCell sx={{ color: "white" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {history.map((order) => (
               <TableRow key={order._id}>
-                <TableCell>{order.product?.name || "Deleted Product"}</TableCell>
-                <TableCell>{order.supplier?.name || "Unknown Supplier"}</TableCell>
-                <TableCell>{order.orderedQuantity}</TableCell>
+                <TableCell>
+                  {order.products.map((p, idx) => (
+                    <div key={idx}>
+                      {p.product?.name || p.customProduct} - {p.quantity} pcs
+                    </div>
+                  ))}
+                </TableCell>
+                <TableCell>{order.supplier?.name || order.customSupplier || "Unknown Supplier"}</TableCell>
                 <TableCell>{new Date(order.orderDate).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  {order.products.reduce((total, p) => total + p.quantity, 0)} pcs
+                </TableCell>
                 <TableCell>
                   <Button variant="contained" color="primary" onClick={() => handleReorder(order)}>
                     Reorder

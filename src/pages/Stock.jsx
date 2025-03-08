@@ -32,22 +32,36 @@ const Stock = () => {
             <TableRow>
               <TableCell sx={{ color: "white" }}>Product</TableCell>
               <TableCell sx={{ color: "white" }}>Available Stock</TableCell>
+              <TableCell sx={{ color: "white" }}>Reserved Stock</TableCell>
+              <TableCell sx={{ color: "white" }}>Reserved For</TableCell>
               <TableCell sx={{ color: "white" }}>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {stock.map((item) => (
               <TableRow key={item?._id}>
-                <TableCell>{item?.product?.name || "Deleted Product"}</TableCell>
+                <TableCell>{item?.product?.name || item?.customProduct || "Deleted Product"}</TableCell>
                 <TableCell>{item?.currentStock ?? "N/A"}</TableCell>
+                <TableCell>{item?.reservedStock || "N/A"} pcs</TableCell>
+                <TableCell>
+                  {item.reservedFor?.length > 0 ? (
+                    item.reservedFor.map((order, index) => (
+                      <div key={index}>
+                        Order ID: {order.orderId} | Supplier: {order.supplier} | Reserved: {order.quantityReserved} pcs
+                      </div>
+                    ))
+                  ) : (
+                    "No Reservations"
+                  )}
+                </TableCell>
                 <TableCell
                   sx={{
                     color:
-                      item?.currentStock < 5 ? "red" :
-                      item?.currentStock < 10 ? "orange" : "green"
+                      item?.currentStock <= 0 ? "red" :
+                      item?.currentStock < 5 ? "orange" : "green"
                   }}
                 >
-                  {item?.currentStock < 5 ? "Out of Stock" : item?.currentStock < 10 ? "Low Stock" : "In Stock"}
+                  {item?.currentStock <= 0 ? "Out of Stock" : item?.currentStock < 5 ? "Low Stock" : "In Stock"}
                 </TableCell>
               </TableRow>
             ))}

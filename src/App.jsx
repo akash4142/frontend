@@ -7,6 +7,7 @@ import Orders from "./pages/Orders.jsx";
 import Stock from "./pages/Stock.jsx";
 import OrderHistory from "./pages/OrderHistory.jsx";
 import PurchaseHistory from "./pages/PurchaseHistory.jsx";
+import Production from "./pages/Production.jsx";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/stock" element={<Stock />} />  
           <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/purchase-history" element={<PurchaseHistory />}/>
+          <Route path="/production" element={<Production />}/>
         </Routes>
       </div>
     </Router>
