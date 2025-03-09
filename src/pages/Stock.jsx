@@ -47,7 +47,7 @@ const Stock = () => {
                   {item.reservedFor?.length > 0 ? (
                     item.reservedFor.map((order, index) => (
                       <div key={index}>
-                        Order ID: {order.orderId} | Supplier: {order.supplier} | Reserved: {order.quantityReserved} pcs
+                        Order ID: {order.orderNumber || order.orderId} | Supplier: {order.supplier} | Reserved: {order.quantityReserved} pcs
                       </div>
                     ))
                   ) : (

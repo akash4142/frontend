@@ -165,20 +165,32 @@ export const updateOrderStatus = async (id, status) => {
 };
 
 
-export const downloadPurchaseOrderPDF = async (id) => {
+export const downloadPurchaseOrderPDF = async (orderId) => {
   try {
-    const response = await axiosClient.get(`/api/orders/${id}/generate-pdf`, { responseType: "blob" });
+    const response = await axiosClient.get(`/api/orders/${orderId}/generate-pdf`, { responseType: "blob" });
+
+    if (response.status !== 200) {
+      throw new Error("Failed to generate PDF");
+    }
+
+    // ✅ Create URL for Blob Data
     const url = window.URL.createObjectURL(new Blob([response.data]));
+
+    // ✅ Create Download Link
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `Purchase_Order_${id}.pdf`);
+    link.setAttribute("download", `Invoice_${orderId}.pdf`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    console.log(`✅ Invoice PDF for order ${orderId} downloaded successfully.`);
   } catch (error) {
-    console.error(`Error downloading order ${id} PDF:`, error);
+    console.error(`❌ Error downloading order ${orderId} PDF:`, error);
+    alert(`❌ Failed to download invoice PDF.`);
   }
 };
+
 
 
 export const checkPendingPayments = async () => {

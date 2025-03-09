@@ -102,7 +102,12 @@ const Products = () => {
               <TableCell sx={{ color: "white" }}>Name</TableCell>
               <TableCell sx={{ color: "white" }}>Production Process</TableCell>
               <TableCell sx={{ color: "white" }}>Packaging</TableCell>
+              <TableCell sx={{ color: "white" }}>Price</TableCell>
+              <TableCell sx={{ color: "white" }}>quantityPerMasterBox</TableCell>
               <TableCell sx={{ color: "white" }}>Actions</TableCell>
+
+              
+              
               
             </TableRow>
           </TableHead>
@@ -112,6 +117,8 @@ const Products = () => {
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.productionProcess}</TableCell>
                 <TableCell>{product.packagingType}</TableCell>
+                <TableCell>$ {product.price}</TableCell>
+                <TableCell>{product.quantityPerMasterBox}</TableCell>
                 <TableCell>
                   <Button variant="contained" color="primary" component={Link} to={`/products/${product._id}`}>
                     View

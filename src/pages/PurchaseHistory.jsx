@@ -53,6 +53,7 @@ const PurchaseHistory = () => {
         <Table>
           <TableHead sx={{ bgcolor: "#1976D2", color: "white" }}>
             <TableRow>
+            <TableCell sx={{ color: "white" }}>Order Number</TableCell>
               <TableCell sx={{ color: "white" }}>Products</TableCell>
               <TableCell sx={{ color: "white" }}>Supplier</TableCell>
               <TableCell sx={{ color: "white" }}>Order Date</TableCell>
@@ -63,6 +64,7 @@ const PurchaseHistory = () => {
           <TableBody>
             {history.map((order) => (
               <TableRow key={order._id}>
+                <TableCell>{order.orderNumber || order._id}</TableCell>
                 <TableCell>
                   {order.products.map((p, idx) => (
                     <div key={idx}>

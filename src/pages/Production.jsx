@@ -49,7 +49,7 @@ const Production = () => {
           <TableBody>
             {productionOrders.map((order) => (
               <TableRow key={order._id}>
-                <TableCell>{order.orderId?._id || "Unknown Order"}</TableCell>
+                <TableCell>{order.orderId?.orderNumber || order.orderId.orderNumber}</TableCell>
                 <TableCell>
                   {order.products.map((p, idx) => (
                     <div key={idx}>
