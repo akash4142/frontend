@@ -1,6 +1,5 @@
 import axiosClient from "./axiosClient";
 
-
 // Fetch Dashboard Stats
 export const getDashboardStats = async () => {
   try {
@@ -12,18 +11,6 @@ export const getDashboardStats = async () => {
   }
 };
 
-
-export const getSuppliers = async () => {
-  try {
-    const response = await axiosClient.get("/api/suppliers");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching suppliers:", error);
-    return [];
-  }
-};
-
-
 export const addProduct = async (newProduct) => {
   try {
     const response = await axiosClient.post("/api/products/add", newProduct);
@@ -34,6 +21,15 @@ export const addProduct = async (newProduct) => {
   }
 };
 
+// ✅ Fix API URL to include `/api/`
+export const updateProductionComments = async (id, comments) => {
+  try {
+    console.log(`📡 API Request -> Updating Comment for ID: ${id}`, { comments });
+    await axiosClient.put(`/api/production/${id}/comments`, { comments }); // ✅ FIXED URL
+  } catch (error) {
+    console.error("❌ Error updating comments:", error.response?.data || error.message);
+  }
+};
 
 // Fetch All Products
 export const getProducts = async () => {
@@ -46,16 +42,6 @@ export const getProducts = async () => {
   }
 };
 
-// Fetch All Orders
-// export const getOrders = async () => {
-//   try {
-//     const response = await axiosClient.get("/api/orders");
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching orders:", error);
-//     throw error;
-//   }
-// };
 export const getOrders = async (filters = {}) => {
   try {
     const params = new URLSearchParams(filters).toString(); // ✅ Convert filters to query string
@@ -67,7 +53,6 @@ export const getOrders = async (filters = {}) => {
   }
 };
 
-
 export const sendOrderToProduction = async (orderId) => {
   try {
     const response = await axiosClient.post("/api/production/send-to-production", { orderId });
@@ -77,8 +62,6 @@ export const sendOrderToProduction = async (orderId) => {
     throw error;
   }
 };
-
-
 
 export const createOrder = async (orderData) => {
   try {
@@ -90,7 +73,6 @@ export const createOrder = async (orderData) => {
   }
 };
 
-
 // Fetch Stock Data
 export const getStock = async () => {
   try {
@@ -101,7 +83,6 @@ export const getStock = async () => {
     throw error;
   }
 };
-
 
 export const downloadPurchaseOrdersExcel = async () => {
   try {
@@ -117,8 +98,6 @@ export const downloadPurchaseOrdersExcel = async () => {
     console.error("Error downloading purchase orders Excel file:", error);
   }
 };
-
-
 
 // Fetch a Single Product by ID
 export const getProductById = async (id) => {
@@ -164,7 +143,6 @@ export const updateOrderStatus = async (id, status) => {
   }
 };
 
-
 export const downloadPurchaseOrderPDF = async (orderId) => {
   try {
     const response = await axiosClient.get(`/api/orders/${orderId}/generate-pdf`, { responseType: "blob" });
@@ -191,8 +169,6 @@ export const downloadPurchaseOrderPDF = async (orderId) => {
   }
 };
 
-
-
 export const checkPendingPayments = async () => {
   try {
     const response = await axiosClient.get("/api/orders/pending-payments");
@@ -203,7 +179,6 @@ export const checkPendingPayments = async () => {
   }
 };
 
-
 export const getPurchaseHistory = async () => {
   try {
     const response = await axiosClient.get("/api/orders/history");
@@ -213,8 +188,6 @@ export const getPurchaseHistory = async () => {
     throw error;
   }
 };
-
-
 
 // ✅ Fetch all production orders
 export const getProductionOrders = async () => {
@@ -250,6 +223,82 @@ export const updateProductionStatus = async (productionId, status) => {
     return response.data;
   } catch (error) {
     console.error("❌ Error updating production status:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// ✅ Fetch Total Pending Payments
+export const getTotalPendingPayments = async () => {
+  try {
+    const response = await axiosClient.get("/api/orders/pending-payments");
+    return response.data.totalAmountOwed;
+  } catch (error) {
+    console.error("❌ Error fetching total pending payments:", error);
+    return 0;
+  }
+};
+
+// ✅ Mark Order as Paid
+export const markOrderAsPaid = async (id) => {
+  try {
+    const response = await axiosClient.put(`/api/orders/${id}/mark-paid`);
+    return response.data;
+  } catch (error) {
+    console.error(`❌ Error marking order ${id} as paid:`, error);
+    throw error;
+  }
+};
+
+// ✅ Fetch All Suppliers
+export const getSuppliers = async () => {
+  try {
+    const response = await axiosClient.get("/api/suppliers");
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error fetching suppliers:", error);
+    return [];
+  }
+};
+
+// ✅ Fetch Single Supplier
+export const getSupplierById = async (id) => {
+  try {
+    const response = await axiosClient.get(`/api/suppliers/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`❌ Error fetching supplier ${id}:`, error);
+    return null;
+  }
+};
+
+// ✅ Create a Supplier
+export const createSupplier = async (supplierData) => {
+  try {
+    const response = await axiosClient.post("/api/suppliers", supplierData);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error creating supplier:", error);
+    throw error;
+  }
+};
+
+// ✅ Update a Supplier
+export const updateSupplier = async (id, supplierData) => {
+  try {
+    const response = await axiosClient.put(`/api/suppliers/${id}`, supplierData);
+    return response.data;
+  } catch (error) {
+    console.error(`❌ Error updating supplier ${id}:`, error);
+    throw error;
+  }
+};
+
+// ✅ Delete a Supplier
+export const deleteSupplier = async (id) => {
+  try {
+    await axiosClient.delete(`/api/suppliers/${id}`);
+  } catch (error) {
+    console.error(`❌ Error deleting supplier ${id}:`, error);
     throw error;
   }
 };

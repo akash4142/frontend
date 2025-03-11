@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { getOrders, updateOrderStatus,createOrder, getSuppliers, getProducts,  downloadPurchaseOrderPDF, downloadPurchaseOrdersExcel, sendOrderToProduction } from "../api/apiService";
+import { getOrders, updateOrderStatus,createOrder, getSuppliers, getProducts,  downloadPurchaseOrderPDF, downloadPurchaseOrdersExcel, sendOrderToProduction ,markOrderAsPaid } from "../api/apiService";
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Button, Container, Typography, Modal, Box, TextField, Select, MenuItem, InputLabel, FormControl, Checkbox, FormControlLabel, Tooltip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 const Orders = () => {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [confirmDialog, setConfirmDialog] = useState({ open: false, action: null, orderId: null });
+const [orders, setOrders] = useState([]);
+const [loading, setLoading] = useState(true);
+const [confirmDialog, setConfirmDialog] = useState({ open: false, action: null, orderId: null });
 const [openModal, setOpenModal] = useState(false);
 const [products, setProducts] = useState([]);
 const [suppliers, setSuppliers] = useState([]);
@@ -66,6 +66,18 @@ const handleRemoveProduct = (index) => {
   const updatedProducts = newOrder.products.filter((_, i) => i !== index);
   setNewOrder({ ...newOrder, products: updatedProducts });
 };
+
+const handleMarkAsPaid = async (id) => {
+  if (!window.confirm("Are you sure you want to mark this order as Paid?")) return;
+  try {
+    await markOrderAsPaid(id);
+    alert("✅ Order marked as Paid successfully!");
+    fetchOrders(); // ✅ Refresh the orders list
+  } catch (error) {
+    alert("❌ Failed to mark order as Paid.");
+  }
+};
+
 
 const handleCreateOrder = async () => {
   if (newOrder.products.length === 0 || (!newOrder.supplier && !newOrder.customSupplier) || !newOrder.expectedArrival) {
@@ -259,8 +271,10 @@ const handleUpdateStatus = async (id, status) => {
               <TableCell sx={{ color: "white" }}>Supplier</TableCell>
               <TableCell sx={{ color: "white" }}>Expected Arrival</TableCell>
               <TableCell sx={{ color: "white" }}>Total Invoice</TableCell>
+              <TableCell sx={{ color: "white" }}>Payment Due Date</TableCell>
               <TableCell sx={{ color: "white" }}>Status</TableCell>
               <TableCell sx={{ color: "white" }}>Actions</TableCell>
+              <TableCell sx={{ color: "white" }}>Payment Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -277,6 +291,7 @@ const handleUpdateStatus = async (id, status) => {
                 <TableCell>{order.supplier?.name || order.customSupplier}</TableCell>
                 <TableCell>{order.estimatedArrival ? new Date(order.estimatedArrival).toLocaleDateString() : "N/A"}</TableCell>
                 <TableCell>${order.invoiceAmount.toFixed(2)}</TableCell>
+                <TableCell>{order.paymentDueDate ? new Date(order.paymentDueDate).toLocaleDateString() : "N/A"}</TableCell>
                 <TableCell>{order.status}</TableCell>
                 <TableCell>
                   {/* ✅ Download PDF Button */}
@@ -322,6 +337,19 @@ const handleUpdateStatus = async (id, status) => {
                     </Tooltip>
                   )}
                 </TableCell>
+
+
+                <TableCell>
+  {/* ✅ Mark as Paid Button */}
+  {order.paymentStatus === "Pending" && (
+    <Tooltip title="Mark Order as Paid">
+      <Button variant="contained" color="success" sx={{ mr: 1 }} onClick={() => handleMarkAsPaid(order._id)}>
+        Mark as Paid
+      </Button>
+    </Tooltip>
+  )}
+</TableCell>
+
               </TableRow>
             ))}
           </TableBody>
