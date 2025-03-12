@@ -200,15 +200,13 @@ const PurchaseHistory = () => {
                 </TableCell>
 
                 <TableCell>
-                  {userRole === "admin" ? (
+                   
                     <Tooltip title="Reorder This Purchase">
                       <Button variant="contained" color="primary" onClick={() => handleReorder(order)}>
                         <Replay /> Reorder
                       </Button>
                     </Tooltip>
-                  ) : (
-                    <Typography variant="body2" color="gray">🔒 Admin Only</Typography>
-                  )}
+                  
                 </TableCell>
               </motion.tr>
             ))}

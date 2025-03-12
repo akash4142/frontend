@@ -199,21 +199,19 @@ const handleUpdateStatus = async (id, status) => {
       <Typography variant="h4" gutterBottom>Orders</Typography>
 
 
-{/* ✅ Add New Order Button (Only Admins) */}
-{userRole === "admin" ? (
+
+
   <Button variant="contained" color="primary" sx={{ mb: 2, mr: 2 }} onClick={() => setOpenModal(true)}>
     + Add New Order
   </Button>
-) : (
-  <Typography variant="body2" color="gray">🔒 Admin Only</Typography>
-)}
+
 
     {/* ✅ Download Orders (Excel) Button (Only Admins) */}
-{userRole === "admin" ? (
+
   <Button variant="contained" color="secondary" sx={{ mb: 2 }} onClick={downloadPurchaseOrdersExcel}>
     Download Orders (Excel)
   </Button>
-) : null}
+
 
 
 
@@ -335,17 +333,15 @@ const handleUpdateStatus = async (id, status) => {
 
  
   {/* ✅ Download PDF */}
-  {userRole==="admin" ? (
+  
   <Tooltip title="Download Purchase Order">
     <Button variant="contained" color="secondary" sx={{ mr: 1 }} onClick={() => downloadPurchaseOrderPDF(order._id)}>
       Download PDF
     </Button>
   </Tooltip>
-  ):(
-    <Typography variant="body2" color="gray">🔒 Admin Only</Typography>
-  )}
+  
   {/* ✅ Approve Order Button */}
-  {userRole === "admin" && order.status === "Pending" && (
+  {order.status === "Pending" && (
     <Tooltip title="Mark Order as Received (Updates Stock)">
       <Button variant="contained" color="success" sx={{ mr: 1 }} onClick={() => setConfirmDialog({ open: true, action: "Approve", orderId: order._id })}>
         Approve
@@ -354,7 +350,7 @@ const handleUpdateStatus = async (id, status) => {
   )}
 
   {/* ✅ Cancel Order Button */}
-  {userRole === "admin" && order.status === "Pending" && (
+  {order.status === "Pending" && (
     <Tooltip title="Cancel Order & Restore Stock">
       <Button variant="contained" color="error" onClick={() => setConfirmDialog({ open: true, action: "Cancel", orderId: order._id })}>
         Cancel
@@ -363,7 +359,7 @@ const handleUpdateStatus = async (id, status) => {
   )}
 
   {/* ✅ Send to Production Button */}
-  {userRole === "admin" && order.status === "Received" && (
+  {order.status === "Received" && (
     <Tooltip title="Move Order to Production">
       <Button variant="contained" color="primary" onClick={() => sendOrderToProduction(order._id)}>
         Send to Production

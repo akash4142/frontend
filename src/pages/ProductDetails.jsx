@@ -425,7 +425,7 @@ const ProductDetails = () => {
                 </Box>
 
                 {/* ✅ Show Edit/Delete Buttons Only for Admins */}
-                {userRole === "admin" && (
+                 (
                   <Box sx={{ mt: 3, display: "flex", justifyContent: "center", gap: 2 }}>
                     <Button variant="contained" sx={{ background: "#FFA000", ":hover": { background: "#FF8F00" } }}>
                       <Edit sx={{ mr: 1 }} /> Edit
@@ -434,7 +434,7 @@ const ProductDetails = () => {
                       <Delete sx={{ mr: 1 }} /> Delete
                     </Button>
                   </Box>
-                )}
+                )
               </>
             ) : null}
           </CardContent>

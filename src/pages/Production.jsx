@@ -123,12 +123,7 @@ const Production = () => {
                   ))}
                 </TableCell>
 
-                {/* <TableCell>
-                  {order.products.map((p, idx) => (
-                    <div key={idx}>{p.product?.productionProcess || "N/A"}</div>
-                  ))}
-                </TableCell> */}
-
+          
 {/* ✅ Packaging Process: Truncated Text + Tooltip + Modal */}
 <TableCell>
                   {order.products.map((p, idx) => (
@@ -168,7 +163,7 @@ const Production = () => {
                 </TableCell>
 
                 <TableCell>
-                  {userRole === "admin" ? (
+                   
                     <>
                       {order.status === "In Production" && (
                         <Tooltip title="Move to Packaging">
@@ -186,9 +181,7 @@ const Production = () => {
                         </Tooltip>
                       )}
                     </>
-                  ) : (
-                    <Typography variant="body2" color="gray">🔒 Admin Only</Typography>
-                  )}
+                  
                 </TableCell>
 
                 <TableCell>

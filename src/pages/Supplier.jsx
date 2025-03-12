@@ -98,7 +98,7 @@ const Suppliers = () => {
                 <TableCell>{supplier.email || "N/A"}</TableCell>
                 <TableCell>{supplier.phone || "N/A"}</TableCell>
                 <TableCell>{supplier.address || "N/A"}</TableCell>
-                {userRole === "admin" && (
+                 
                   <TableCell>
                     <Tooltip title="Edit">
                       <IconButton color="primary" onClick={() => { setEditingSupplier(supplier); setSupplierData(supplier); setOpenModal(true); }}>
@@ -111,7 +111,7 @@ const Suppliers = () => {
                       </IconButton>
                     </Tooltip>
                   </TableCell>
-                )}
+                
               </motion.tr>
             ))}
           </TableBody>
