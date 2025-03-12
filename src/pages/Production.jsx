@@ -1,12 +1,19 @@
+
 import { useEffect, useState } from "react";
-import { getProductionOrders, updateProductionStatus ,updateProductionComments} from "../api/apiService";
-import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Button, Container, Typography, Tooltip ,TextField} from "@mui/material";
+import { getProductionOrders, updateProductionStatus, updateProductionComments } from "../api/apiService";
+import {
+  TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Button, Container, Typography,
+  Tooltip, TextField, Chip, IconButton
+} from "@mui/material";
+import { Edit, CheckCircle, LocalShipping, Settings, ProductionQuantityLimits, Inventory } from "@mui/icons-material";
+import { motion } from "framer-motion"; // ✅ Smooth animations
 
 const Production = () => {
   const [productionOrders, setProductionOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState({});
-  
+  const userRole = localStorage.getItem("role") || "public"; // ✅ Get user role
+
   useEffect(() => {
     fetchProductionOrders();
   }, []);
@@ -29,25 +36,26 @@ const Production = () => {
     }
   };
 
-  // ✅ Handle Comment Updates
+  // ✅ Handle Comment Updates (Only Admins)
   const handleUpdateComment = async (id) => {
+    if (userRole !== "admin") return;
     try {
-      console.log(`📝 Sending update for Order ID: ${id} - New Comment:`, comments[id]); // ✅ Debugging log
       await updateProductionComments(id, comments[id] || ""); 
-      fetchProductionOrders(); // ✅ Ensure we fetch the latest data
+      fetchProductionOrders();
     } catch (error) {
       alert(`❌ Failed to update comment.`);
     }
   };
-  
-  
 
-  // ✅ Handle Live Comment Changes
+  // ✅ Handle Live Comment Changes (Only Admins)
   const handleCommentChange = (id, value) => {
+    if (userRole !== "admin") return;
     setComments({ ...comments, [id]: value });
   };
 
+  // ✅ Handle Status Updates (Only Admins)
   const handleUpdateStatus = async (id, status) => {
+    if (userRole !== "admin") return;
     try {
       await updateProductionStatus(id, status);
       fetchProductionOrders();
@@ -56,15 +64,29 @@ const Production = () => {
     }
   };
 
+  // ✅ Assign Colors Based on Status
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "In Production":
+        return "blue";
+      case "Packaging":
+        return "orange";
+      case "Completed":
+        return "green";
+      default:
+        return "gray";
+    }
+  };
+
   if (loading) return <Typography align="center" sx={{ mt: 4 }}>Loading...</Typography>;
 
   return (
     <Container sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom sx={{ textAlign: "center", fontWeight: "bold" }}>
-        Production & Packaging Overview
+      <Typography variant="h4" gutterBottom sx={{ textAlign: "center", fontWeight: "bold", color: "#1976D2" }}>
+        🏭 Production & Packaging Overview
       </Typography>
 
-      <TableContainer component={Paper} sx={{ mt: 3 }}>
+      <TableContainer component={Paper} sx={{ mt: 3, borderRadius: "10px", boxShadow: "0px 4px 10px rgba(0,0,0,0.2)" }}>
         <Table>
           <TableHead sx={{ bgcolor: "#1976D2", color: "white" }}>
             <TableRow>
@@ -82,7 +104,7 @@ const Production = () => {
 
           <TableBody>
             {productionOrders.map((order) => (
-              <TableRow key={order._id}>
+              <motion.tr key={order._id} whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                 <TableCell>{order.orderId?.orderNumber || "N/A"}</TableCell>
                 
                 <TableCell>
@@ -117,45 +139,57 @@ const Production = () => {
                   ))}
                 </TableCell>                
 
-                <TableCell>{order.status}</TableCell>
+                <TableCell>
+                  <Chip label={order.status} sx={{ bgcolor: getStatusColor(order.status), color: "white" }} />
+                </TableCell>
 
                 <TableCell>
-                  {order.status === "In Production" && (
-                    <Tooltip title="Move to Packaging">
-                      <Button variant="contained" color="warning" onClick={() => handleUpdateStatus(order._id, "Packaging")}>
-                        Move to Packaging
-                      </Button>
-                    </Tooltip>
-                  )}
+                  {userRole === "admin" ? (
+                    <>
+                      {order.status === "In Production" && (
+                        <Tooltip title="Move to Packaging">
+                          <Button variant="contained" color="warning" onClick={() => handleUpdateStatus(order._id, "Packaging")}>
+                            <LocalShipping /> Move
+                          </Button>
+                        </Tooltip>
+                      )}
 
-                  {order.status === "Packaging" && (
-                    <Tooltip title="Mark as Completed">
-                      <Button variant="contained" color="success" onClick={() => handleUpdateStatus(order._id, "Completed")}>
-                        Mark as Completed
-                      </Button>
-                    </Tooltip>
+                      {order.status === "Packaging" && (
+                        <Tooltip title="Mark as Completed">
+                          <Button variant="contained" color="success" onClick={() => handleUpdateStatus(order._id, "Completed")}>
+                            <CheckCircle /> Complete
+                          </Button>
+                        </Tooltip>
+                      )}
+                    </>
+                  ) : (
+                    <Typography variant="body2" color="gray">🔒 Admin Only</Typography>
                   )}
                 </TableCell>
 
                 <TableCell>
-  <TextField
-    fullWidth
-    multiline // ✅ Allows multiple lines
-    minRows={2} // ✅ Initial height of 2 rows
-    maxRows={6} // ✅ Expands up to 6 rows when needed
-    placeholder="Add or update notes..."
-    value={comments[order._id] || ""}
-    onChange={(e) => handleCommentChange(order._id, e.target.value)}
-    onBlur={() => handleUpdateComment(order._id)} // ✅ Auto-save on blur
-    sx={{
-      fontSize: "12px", // ✅ Smaller font size
-      "& .MuiInputBase-input": { fontSize: "12px" }, // ✅ Ensures input text is smaller
-    }}
-  />
-</TableCell>
-
-
-              </TableRow>
+                  {userRole === "admin" ? (
+                    <TextField
+                      fullWidth
+                      multiline
+                      minRows={2}
+                      maxRows={6}
+                      placeholder="Add or update notes..."
+                      value={comments[order._id] || ""}
+                      onChange={(e) => handleCommentChange(order._id, e.target.value)}
+                      onBlur={() => handleUpdateComment(order._id)}
+                      sx={{
+                        fontSize: "12px",
+                        "& .MuiInputBase-input": { fontSize: "12px" },
+                      }}
+                    />
+                  ) : (
+                    <Typography variant="body2" sx={{ fontSize: "12px", color: "gray" }}>
+                      {comments[order._id] || "No Comments"}
+                    </Typography>
+                  )}
+                </TableCell>
+              </motion.tr>
             ))}
           </TableBody>
         </Table>
@@ -165,3 +199,4 @@ const Production = () => {
 };
 
 export default Production;
+

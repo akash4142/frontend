@@ -1,8 +1,30 @@
+
 // import { useEffect, useState } from "react";
-// import { getProducts, addProduct ,getSuppliers} from "../api/apiService";
-// import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Button, Container, TextField, Box, Modal, Typography,FormControl,InputLabel ,Select,MenuItem} from "@mui/material";
+// import { getProducts, addProduct, getSuppliers } from "../api/apiService";
+// import {
+//   TableContainer,
+//   Table,
+//   TableHead,
+//   TableRow,
+//   TableCell,
+//   TableBody,
+//   Paper,
+//   Button,
+//   Container,
+//   Typography,
+//   FormControl,
+//   InputLabel,
+//   Select,
+//   MenuItem,
+//   Box,
+//   Tooltip,
+// } from "@mui/material";
 // import { Link } from "react-router-dom";
 // import ProductModal from "../components/ProductModal";
+// import { ShoppingCart, AttachMoney, Inventory, Category, Storefront, Ballot } from "@mui/icons-material";
+// import { motion } from "framer-motion"; // ✅ Import animation library
+
+// const userRole = localStorage.getItem("role") || "public"; // ✅ Get user role
 
 // const Products = () => {
 //   const [products, setProducts] = useState([]);
@@ -22,7 +44,6 @@
 //     manufacturerReference: "",
 //   });
 
-  
 //   useEffect(() => {
 //     fetchProducts();
 //     fetchSuppliers();
@@ -49,28 +70,17 @@
 //   };
 
 //   const handleAddProduct = async () => {
-//     if (!newProduct.name || !newProduct.productionProcess || !newProduct.packagingType || !newProduct.quantityPerMasterBox || !newProduct.price || !newProduct.supplier|| !newProduct.ASIN || !newProduct.SKU) {
+//     if (!newProduct.name || !newProduct.productionProcess || !newProduct.packagingType || !newProduct.quantityPerMasterBox || !newProduct.price || !newProduct.supplier || !newProduct.ASIN || !newProduct.SKU) {
 //       alert("Please fill in all required fields.");
 //       return;
 //     }
 
 //     try {
-//       await addProduct({
-//         ...newProduct,
-//         requiredMaterials: newProduct.requiredMaterials.split(",").map((item) => item.trim()), // Convert string to array
-//         quantityPerMasterBox: parseInt(newProduct.quantityPerMasterBox,10),
-//         price:parseFloat(newProduct.price),
-//         supplier: newProduct.supplier,
-//       });
-
-//       // Reset form fields
-//       setNewProduct({ name: "", productionProcess: "", packagingType: "", requiredMaterials: "" , quantityPerMasterBox:"",price:"",supplier:"",ASIN:"",SKU:"",manufacturerReference:""});
-
-//       fetchProducts(); // Refresh product list after adding a new product
-//       setOpenModal(false); // Close the modal after adding a product
+//       await addProduct({ ...newProduct });
+//       setOpenModal(false);
+//       fetchProducts();
 //     } catch (error) {
-//       console.error("Error adding product:", error);
-//       alert("Failed to add product. Please try again.");
+//       alert(error.response?.data?.message || "Failed to add product. Please try again.");
 //     }
 //   };
 
@@ -78,104 +88,66 @@
 
 //   return (
 //     <Container sx={{ mt: 4 }}>
-//       <Typography variant="h4" gutterBottom>Products</Typography>
+//       <Typography variant="h4" gutterBottom sx={{ textAlign: "center", fontWeight: "bold", color: "#3f51b5" }}>
+//         🛍️ Product Management
+//       </Typography>
 
-//       {/* ✅ "Add New Product" Button to Open Modal */}
-//       <Button variant="contained" color="primary" onClick={() => setOpenModal(true)} sx={{ mb: 2 }}>
-//         Add New Product
-//       </Button>
+//       {/* ✅ Admin Only: Add Product Button */}
+//       {userRole === "admin" ? (
+//         <Button variant="contained" color="primary" sx={{ mb: 2 }} onClick={() => setOpenModal(true)}>
+//           + Add New Product
+//         </Button>
+//       ) : (
+//         <Typography variant="body2" color="gray">🔒 Admin Only</Typography>
+//       )}
 
-//       {/* ✅ Modal for Adding a New Product */}
-//       <Modal open={openModal} onClose={() => setOpenModal(false)}>
-//         <Box sx={{
-//           position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-//           width: 400, bgcolor: "background.paper", boxShadow: 24, p: 4, borderRadius: 2
-//         }}>
-//           <Typography variant="h6" gutterBottom>Add New Product</Typography>
-//           <TextField fullWidth label="Product Name" margin="normal"
-//             value={newProduct.name} onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-//           />
-//           <TextField fullWidth label="Production Process" margin="normal"
-//             value={newProduct.productionProcess} onChange={(e) => setNewProduct({ ...newProduct, productionProcess: e.target.value })}
-//           />
-//           <TextField fullWidth label="Packaging Type" margin="normal"
-//             value={newProduct.packagingType} onChange={(e) => setNewProduct({ ...newProduct, packagingType: e.target.value })}
-//           />
-//           <TextField fullWidth label="Required Materials (comma-separated)" margin="normal"
-//             value={newProduct.requiredMaterials} onChange={(e) => setNewProduct({ ...newProduct, requiredMaterials: e.target.value })}
-//           />
-//            <TextField fullWidth label="Quantity Per Master Box" margin="normal" type="number"
-//             value={newProduct.quantityPerMasterBox} onChange={(e) => setNewProduct({ ...newProduct, quantityPerMasterBox: e.target.value })}
-//           />
-//           <TextField fullWidth type="number" label="Price" margin="normal" value={newProduct.price}
-//             onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-//           />
-
-//           {/* ✅ Single Supplier Selection */}
-//           <FormControl fullWidth sx={{ mt: 2 }}>
-//             <InputLabel>Select Supplier</InputLabel>
-//             <Select
-//               value={newProduct.supplier}
-//               onChange={(e) => {
-//                 setNewProduct({ ...newProduct, supplier: e.target.value });
-//               }}
-//             >
-//               {suppliers.map((supplier) => (
-//                 <MenuItem key={supplier._id} value={supplier._id}>{supplier.name}</MenuItem>
-//               ))}
-//             </Select>
-//           </FormControl>
-
-//           <TextField fullWidth label="ASIN" margin="normal" required value={newProduct.ASIN} onChange={(e) => setNewProduct({ ...newProduct, ASIN: e.target.value })} />
-//           <TextField fullWidth label="SKU" margin="normal" required value={newProduct.SKU} onChange={(e) => setNewProduct({ ...newProduct, SKU: e.target.value })} />
-//           <TextField fullWidth label="Manufacturer Reference" margin="normal" value={newProduct.manufacturerReference} onChange={(e) => setNewProduct({ ...newProduct, manufacturerReference: e.target.value })} />
-//           <Button variant="contained" color="primary" onClick={handleAddProduct} sx={{ mt: 2 }}>
-//             Submit
-//           </Button>
-//           <Button variant="outlined" color="secondary" onClick={() => setOpenModal(false)} sx={{ mt: 2, ml: 2 }}>
-//             Cancel
-//           </Button>
-//         </Box>
-//       </Modal>
+//       {/* ✅ Product Modal */}
+//       <ProductModal
+//         open={openModal}
+//         onClose={() => setOpenModal(false)}
+//         newProduct={newProduct}
+//         setNewProduct={setNewProduct}
+//         handleAddProduct={handleAddProduct}
+//         suppliers={suppliers}
+//       />
 
 //       {/* ✅ Product Table */}
-//       <TableContainer component={Paper}>
+//       <TableContainer component={Paper} sx={{ borderRadius: "10px", boxShadow: "0px 4px 10px rgba(0,0,0,0.2)" }}>
 //         <Table>
-//           <TableHead sx={{ bgcolor: "#1976D2", color: "white" }}>
+//           <TableHead sx={{ bgcolor: "#1976D2" }}>
 //             <TableRow>
-//               <TableCell sx={{ color: "white" }}>Name</TableCell>
-//               <TableCell sx={{ color: "white" }}>Production Process</TableCell>
-//               <TableCell sx={{ color: "white" }}>Packaging</TableCell>
-//               <TableCell sx={{ color: "white" }}>Price</TableCell>
-//               <TableCell sx={{ color: "white" }}>quantityPerMasterBox</TableCell>
-//               <TableCell sx={{ color: "white" }}>Suppliers</TableCell> {/* ✅ New Column */}
+//               <TableCell sx={{ color: "white" }}><Ballot /> SKU</TableCell>
+//               <TableCell sx={{ color: "white" }}><Ballot /> ASIN</TableCell>
+//               <TableCell sx={{ color: "white" }}><ShoppingCart /> Name</TableCell>
+//               <TableCell sx={{ color: "white" }}><Category /> Manufacturer</TableCell>
+//               <TableCell sx={{ color: "white" }}><AttachMoney /> Price</TableCell>
+//               <TableCell sx={{ color: "white" }}><Inventory /> Packaging</TableCell>
+//               <TableCell sx={{ color: "white" }}><Storefront /> Supplier</TableCell>
 //               <TableCell sx={{ color: "white" }}>Actions</TableCell>
-
-              
-              
-              
 //             </TableRow>
 //           </TableHead>
 //           <TableBody>
 //             {products.map((product) => (
-//               <TableRow key={product._id}>
+//               <motion.tr key={product._id} whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+//                 <TableCell>{product.SKU}</TableCell>
+//                 <TableCell>{product.ASIN}</TableCell>
 //                 <TableCell>{product.name}</TableCell>
-//                 <TableCell>{product.productionProcess}</TableCell>
-//                 <TableCell>{product.packagingType}</TableCell>
+//                 <TableCell>{product.manufacturerReference}</TableCell>
 //                 <TableCell>$ {product.price}</TableCell>
-//                 <TableCell>{product.quantityPerMasterBox}</TableCell>
+//                 <TableCell>{product.packagingType}</TableCell>
 //                 <TableCell>
-//   {Array.isArray(product.suppliers) && product.suppliers.length > 0
-//     ? product.suppliers.map((s) => s.name).join(", ")
-//     : "No Supplier"} {/* ✅ Properly handles multiple suppliers */}
-// </TableCell>
-
-//                 <TableCell>
-//                   <Button variant="contained" color="primary" component={Link} to={`/products/${product._id}`}>
-//                     View
-//                   </Button>
+//                   {Array.isArray(product.suppliers) && product.suppliers.length > 0
+//                     ? product.suppliers.map((s) => s.name).join(", ")
+//                     : "No Supplier"}
 //                 </TableCell>
-//               </TableRow>
+//                 <TableCell>
+//                   <Tooltip title="View Product">
+//                     <Button variant="contained" color="primary" component={Link} to={`/products/${product._id}`}>
+//                       View
+//                     </Button>
+//                   </Tooltip>
+//                 </TableCell>
+//               </motion.tr>
 //             ))}
 //           </TableBody>
 //         </Table>
@@ -185,14 +157,32 @@
 // };
 
 // export default Products;
-
-
-
 import { useEffect, useState } from "react";
-import { getProducts, addProduct ,getSuppliers} from "../api/apiService";
-import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Button, Container, TextField, Box, Modal, Typography,FormControl,InputLabel ,Select,MenuItem} from "@mui/material";
+import { getProducts, addProduct, getSuppliers } from "../api/apiService";
+import {
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+  Button,
+  Container,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Box,
+  Tooltip,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import ProductModal from "../components/ProductModal";
+import { ShoppingCart, AttachMoney, Inventory, Category, Storefront, Ballot, ColorLens } from "@mui/icons-material";
+import { motion } from "framer-motion"; // ✅ Import animation library
+
+const userRole = localStorage.getItem("role") || "public"; // ✅ Get user role
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -212,7 +202,6 @@ const Products = () => {
     manufacturerReference: "",
   });
 
-  
   useEffect(() => {
     fetchProducts();
     fetchSuppliers();
@@ -239,7 +228,7 @@ const Products = () => {
   };
 
   const handleAddProduct = async () => {
-    if (!newProduct.name || !newProduct.productionProcess || !newProduct.packagingType || !newProduct.quantityPerMasterBox || !newProduct.price || !newProduct.supplier|| !newProduct.ASIN || !newProduct.SKU) {
+    if (!newProduct.name || !newProduct.productionProcess || !newProduct.packagingType || !newProduct.quantityPerMasterBox || !newProduct.price || !newProduct.supplier || !newProduct.ASIN || !newProduct.SKU) {
       alert("Please fill in all required fields.");
       return;
     }
@@ -257,66 +246,96 @@ const Products = () => {
 
   return (
     <Container sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>Products</Typography>
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{
+          textAlign: "center",
+          fontWeight: "bold",
+          color: "#ffffff",
+          background: "linear-gradient(45deg, #ff6f61, #ffb74d)",
+          padding: "15px",
+          borderRadius: "10px",
+          boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
+        }}
+      >
+        🛍️ Product Management
+      </Typography>
 
-      {/* ✅ "Add New Product" Button to Open Modal */}
-      <Button variant="contained" color="primary" onClick={() => setOpenModal(true)} sx={{ mb: 2 }}>
-        Add New Product
-      </Button>
+      {/* ✅ Admin Only: Add Product Button */}
+      {userRole === "admin" ? (
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{
+            mb: 2,
+            fontWeight: "bold",
+            background: "linear-gradient(45deg, #007AFF, #0051ff)",
+            ":hover": { background: "linear-gradient(45deg, #0051ff, #0033cc)" },
+          }}
+          onClick={() => setOpenModal(true)}
+        >
+          + Add New Product
+        </Button>
+      ) : (
+        <Typography variant="body2" color="gray">🔒 Admin Only</Typography>
+      )}
 
+      {/* ✅ Product Modal */}
       <ProductModal
-              open={openModal}
-              onClose={() => setOpenModal(false)}
-              newProduct={newProduct}
-              setNewProduct={setNewProduct}
-              handleAddProduct={handleAddProduct}
-              suppliers={suppliers}
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        newProduct={newProduct}
+        setNewProduct={setNewProduct}
+        handleAddProduct={handleAddProduct}
+        suppliers={suppliers}
       />
 
       {/* ✅ Product Table */}
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ borderRadius: "10px", boxShadow: "0px 4px 10px rgba(0,0,0,0.2)" }}>
         <Table>
-          <TableHead sx={{ bgcolor: "#1976D2", color: "white" }}>
+          <TableHead sx={{ bgcolor: "#2E3B55" }}>
             <TableRow>
-              <TableCell sx={{ color: "white" }}>SKU</TableCell>
-              <TableCell sx={{ color: "white" }}>ASIN</TableCell>
-              <TableCell sx={{ color: "white" }}>Name</TableCell>
-              <TableCell sx={{ color: "white" }}>ManufacturerReference</TableCell>
-              <TableCell sx={{ color: "white" }}>Production Process</TableCell>
-              <TableCell sx={{ color: "white" }}>Packaging</TableCell>
-              <TableCell sx={{ color: "white" }}>Price</TableCell>
-              <TableCell sx={{ color: "white" }}>QuantityPerMasterBox</TableCell>
-              <TableCell sx={{ color: "white" }}>Suppliers</TableCell> {/* ✅ New Column */}
+              <TableCell sx={{ color: "white" }}><Ballot /> SKU</TableCell>
+              <TableCell sx={{ color: "white" }}><Ballot /> ASIN</TableCell>
+              <TableCell sx={{ color: "white" }}><ShoppingCart /> Name</TableCell>
+              <TableCell sx={{ color: "white" }}><Category /> Manufacturer</TableCell>
+              <TableCell sx={{ color: "white" }}><AttachMoney /> Price</TableCell>
+              <TableCell sx={{ color: "white" }}><Inventory /> Packaging</TableCell>
+              <TableCell sx={{ color: "white" }}><Storefront /> Supplier</TableCell>
               <TableCell sx={{ color: "white" }}>Actions</TableCell>
-
-              
-              
-              
             </TableRow>
           </TableHead>
           <TableBody>
             {products.map((product) => (
-              <TableRow key={product._id}>
+              <motion.tr key={product._id} whileHover={{ scale: 1.02, backgroundColor: "#f1f1f1" }} transition={{ duration: 0.2 }}>
                 <TableCell>{product.SKU}</TableCell>
                 <TableCell>{product.ASIN}</TableCell>
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.manufacturerReference}</TableCell>
-                <TableCell>{product.productionProcess}</TableCell>
+                <TableCell sx={{ color: "#ff6f61", fontWeight: "bold" }}>$ {product.price}</TableCell>
                 <TableCell>{product.packagingType}</TableCell>
-                <TableCell>$ {product.price}</TableCell>
-                <TableCell>{product.quantityPerMasterBox}</TableCell>
                 <TableCell>
-  {Array.isArray(product.suppliers) && product.suppliers.length > 0
-    ? product.suppliers.map((s) => s.name).join(", ")
-    : "No Supplier"} {/* ✅ Properly handles multiple suppliers */}
-</TableCell>
-
-                <TableCell>
-                  <Button variant="contained" color="primary" component={Link} to={`/products/${product._id}`}>
-                    View
-                  </Button>
+                  {Array.isArray(product.suppliers) && product.suppliers.length > 0
+                    ? product.suppliers.map((s) => s.name).join(", ")
+                    : "No Supplier"}
                 </TableCell>
-              </TableRow>
+                <TableCell>
+                  <Tooltip title="View Product">
+                    <Button
+                      variant="contained"
+                      sx={{
+                        background: "linear-gradient(45deg, #4CAF50, #388E3C)",
+                        ":hover": { background: "linear-gradient(45deg, #388E3C, #2E7D32)" },
+                      }}
+                      component={Link}
+                      to={`/products/${product._id}`}
+                    >
+                      View
+                    </Button>
+                  </Tooltip>
+                </TableCell>
+              </motion.tr>
             ))}
           </TableBody>
         </Table>
