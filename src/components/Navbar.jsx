@@ -2,16 +2,18 @@ import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion"; // ✅ Import Framer Motion
 import { BusinessCenter } from "@mui/icons-material"; // ✅ Import an icon for Purchase Management
+import { useNavigate } from "react-router-dom";
 
-const Navbar = () => {
+const Navbar = (setIsAuthenticated) => {
   const userRole = localStorage.getItem("role") || "public";
+  const navigate = useNavigate(); 
 
   const handleLogout = () => {
-    localStorage.removeItem("role");
-    alert("✅ Logged out successfully!");
-    window.location.reload();
+    localStorage.removeItem("adminAuth");
+    navigate("/admin-login");
+    window.location.reload(); // ✅ Forces logout immediately
   };
-
+  
   return (
     <AppBar
       position="fixed"

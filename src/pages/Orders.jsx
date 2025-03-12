@@ -49,6 +49,7 @@ const [newOrder, setNewOrder] = useState({
   supplier: "",
   customSupplier: "",
   expectedArrival: "",
+  invoiceNumber:"",
 });
 
    useEffect(() => {
@@ -112,7 +113,12 @@ const handleMarkAsPaid = async (id) => {
 
 
 const handleCreateOrder = async () => {
-  if (newOrder.products.length === 0 || (!newOrder.supplier && !newOrder.customSupplier) || !newOrder.expectedArrival) {
+  if (
+    newOrder.products.length === 0 ||
+    (!newOrder.supplier && !newOrder.customSupplier) ||
+    !newOrder.expectedArrival ||
+    !newOrder.invoiceNumber
+  ) {
     alert("❌ Please fill in all required fields!");
     return;
   }
@@ -121,18 +127,26 @@ const handleCreateOrder = async () => {
     await createOrder({
       products: newOrder.products,
       supplier: useCustomSupplier ? null : newOrder.supplier,
-      customSupplier: useCustomSupplier ? newOrder.customSupplier : null,
-      expectedDelivery: newOrder.expectedArrival,
+      customSupplier: newOrder.customSupplier || null,
+      expectedDelivery: newOrder.expectedArrival, // ✅ Change here
+      invoiceNumber: newOrder.invoiceNumber,
     });
 
     alert("✅ Order placed successfully!");
     setOpenModal(false);
-    setNewOrder({ products: [{ product: "", quantity: 1 }], supplier: "", customSupplier: "", expectedArrival: "" });
+    setNewOrder({
+      products: [{ product: "", quantity: 1 }],
+      supplier: "",
+      customSupplier: "",
+      expectedArrival: "",
+      invoiceNumber: "",
+    });
     fetchOrders();
   } catch (error) {
     alert(error.response?.data?.message || "❌ Failed to create order.");
   }
 };
+
 
 const handleSendToProduction = async (orderId) => {
   try {
@@ -254,7 +268,13 @@ const handleUpdateStatus = async (id, status) => {
 
           <TextField fullWidth type="date" label="Expected Arrival" InputLabelProps={{ shrink: true }} margin="normal" value={newOrder.expectedArrival} onChange={(e) => setNewOrder({ ...newOrder, expectedArrival: e.target.value })} />
 
-          
+          <TextField
+            fullWidth
+            label="Invoice Number"
+            margin="normal"
+            value={newOrder.invoiceNumber}
+            onChange={(e) => setNewOrder({ ...newOrder, invoiceNumber: e.target.value })}
+          />
 
 
           <Button variant="contained" color="primary" onClick={handleCreateOrder} sx={{ mt: 2 }}>Place Order</Button>
@@ -267,6 +287,7 @@ const handleUpdateStatus = async (id, status) => {
           <TableHead sx={{ bgcolor: "#1976D2", color: "white" }}>
             <TableRow>
               <TableCell sx={{ color: "white" }}>Order ID</TableCell>
+              <TableCell sx={{ color: "white" }}>Invoice Number</TableCell>
               <TableCell sx={{ color: "white" }}>Products</TableCell>
               <TableCell sx={{ color: "white" }}>Supplier</TableCell>
               <TableCell sx={{ color: "white" }}>Expected Arrival</TableCell>
@@ -282,6 +303,7 @@ const handleUpdateStatus = async (id, status) => {
             {orders.map((order) => (
               <TableRow key={order._id}>
                 <TableCell>{order.orderNumber || order._id}</TableCell>
+                <TableCell>{order.invoiceNumber}</TableCell>
                 <TableCell>
                   {order.products.map((p, idx) => (
                     <div key={idx}>

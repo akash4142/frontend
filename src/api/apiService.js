@@ -3,11 +3,30 @@ import axiosClient from "./axiosClient";
 // Fetch Dashboard Stats
 export const getDashboardStats = async () => {
   try {
-    const response = await axiosClient.get("/api/dashboard");
-    return response.data;
+    const response = await axiosClient.get("/api/dashboard"); // ✅ Matches your backend route
+
+    // ✅ Axios automatically parses JSON, use `response.data`
+    const data = response.data;
+
+    return {
+      totalPurchases: data.totalPurchases || 0,
+      pendingPayments: data.pendingPayments || 0,
+      totalStockItems: data.totalStockItems || 0,
+      ongoingProduction: data.ongoingProduction || 0,
+      latestOrders: data.latestOrders || [],
+      ordersInProduction: data.ordersInProduction || [],
+    };
   } catch (error) {
-    console.error("Error fetching dashboard data:", error);
-    throw error;
+    console.error("❌ Error fetching dashboard stats:", error);
+
+    return {
+      totalPurchases: 0,
+      pendingPayments: 0,
+      totalStockItems: 0,
+      ongoingProduction: 0,
+      latestOrders: [],
+      ordersInProduction: [],
+    };
   }
 };
 
