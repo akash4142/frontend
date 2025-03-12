@@ -6,7 +6,7 @@ import {
   MenuItem, InputLabel, FormControl, Tooltip, Dialog, DialogActions, 
   DialogContent, DialogContentText, DialogTitle, LinearProgress 
 } from "@mui/material";
-import { FilterList, CalendarToday, Event } from "@mui/icons-material";
+import OrderFilters from "../components/OrderFilters"; 
 
 //✅ Function to Get Progress Percentage Based on Order Status
 const getOrderProgress = (status) => {
@@ -201,112 +201,12 @@ const handleUpdateStatus = async (id, status) => {
   </Button>
 ) : null}
 
-      {/* ✅ Filter Options
-      <FormControl sx={{ mr: 2, minWidth: 200 }}>
-        <InputLabel>Filter by Product</InputLabel>
-        <Select
-          value={filters.productId}
-          onChange={(e) => setFilters({ ...filters, productId: e.target.value })}
-        >
-          <MenuItem value="">All Products</MenuItem>
-          {products.map((product) => (
-            <MenuItem key={product._id} value={product._id}>{product.name}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
 
-      <FormControl sx={{ mr: 2, minWidth: 120 }}>
-        <InputLabel>Filter by Month</InputLabel>
-        <Select
-          value={filters.month}
-          onChange={(e) => setFilters({ ...filters, month: e.target.value })}
-        >
-          <MenuItem value="">All Months</MenuItem>
-          {Array.from({ length: 12 }, (_, i) => (
-            <MenuItem key={i + 1} value={i + 1}>{`Month ${i + 1}`}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
 
-      <FormControl sx={{ mr: 2, minWidth: 120 }}>
-        <InputLabel>Filter by Year</InputLabel>
-        <Select
-          value={filters.year}
-          onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-        >
-          <MenuItem value="">All Years</MenuItem>
-          {Array.from({ length: 5 }, (_, i) => (
-            <MenuItem key={i} value={new Date().getFullYear() - i}>
-              {new Date().getFullYear() - i}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+<OrderFilters filters={filters} setFilters={setFilters} fetchOrders={fetchOrders} products={products} />
 
-      <Button variant="contained" color="primary" onClick={fetchOrders}>
-        Apply Filters
-      </Button> */}
 
-<Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 3, alignItems: "center" }}>
-      {/* ✅ Product Filter */}
-      <FormControl sx={{ minWidth: 200, flex: 1 }}>
-        <InputLabel><FilterList sx={{ mr: 1 }} /> Filter by Product</InputLabel>
-        <Select
-          value={filters.productId}
-          onChange={(e) => setFilters({ ...filters, productId: e.target.value })}
-        >
-          <MenuItem value="">All Products</MenuItem>
-          {products.map((product) => (
-            <MenuItem key={product._id} value={product._id}>{product.name}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
 
-      {/* ✅ Month Filter */}
-      <FormControl sx={{ minWidth: 150, flex: 1 }}>
-        <InputLabel><CalendarToday sx={{ mr: 1 }} /> Filter by Month</InputLabel>
-        <Select
-          value={filters.month}
-          onChange={(e) => setFilters({ ...filters, month: e.target.value })}
-        >
-          <MenuItem value="">All Months</MenuItem>
-          {Array.from({ length: 12 }, (_, i) => (
-            <MenuItem key={i + 1} value={i + 1}>{`Month ${i + 1}`}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      {/* ✅ Year Filter */}
-      <FormControl sx={{ minWidth: 150, flex: 1 }}>
-        <InputLabel><Event sx={{ mr: 1 }} /> Filter by Year</InputLabel>
-        <Select
-          value={filters.year}
-          onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-        >
-          <MenuItem value="">All Years</MenuItem>
-          {Array.from({ length: 5 }, (_, i) => (
-            <MenuItem key={i} value={new Date().getFullYear() - i}>
-              {new Date().getFullYear() - i}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      {/* ✅ Apply Filters Button */}
-      <Button 
-        variant="contained" 
-        color="primary" 
-        onClick={fetchOrders}
-        sx={{
-          bgcolor: "#1976D2",
-          "&:hover": { bgcolor: "#115293" },
-          px: 3,
-          height: "100%",
-        }}
-      >
-        Apply Filters
-      </Button>
-    </Box>
 <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 500, bgcolor: "background.paper", boxShadow: 24, p: 4, borderRadius: 2 }}>
           <Typography variant="h6" gutterBottom>Add New Order</Typography>

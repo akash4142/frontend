@@ -3,16 +3,18 @@ import { useEffect, useState } from "react";
 import { getProductionOrders, updateProductionStatus, updateProductionComments } from "../api/apiService";
 import {
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Button, Container, Typography,
-  Tooltip, TextField, Chip, IconButton
+  Tooltip, TextField, Chip, IconButton, Modal, Box
 } from "@mui/material";
 import { Edit, CheckCircle, LocalShipping, Settings, ProductionQuantityLimits, Inventory } from "@mui/icons-material";
 import { motion } from "framer-motion"; // ✅ Smooth animations
+
 
 const Production = () => {
   const [productionOrders, setProductionOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState({});
   const userRole = localStorage.getItem("role") || "public"; // ✅ Get user role
+  const [selectedProcess, setSelectedProcess] = useState(null);
 
   useEffect(() => {
     fetchProductionOrders();
@@ -121,11 +123,33 @@ const Production = () => {
                   ))}
                 </TableCell>
 
-                <TableCell>
+                {/* <TableCell>
                   {order.products.map((p, idx) => (
                     <div key={idx}>{p.product?.productionProcess || "N/A"}</div>
                   ))}
+                </TableCell> */}
+
+{/* ✅ Packaging Process: Truncated Text + Tooltip + Modal */}
+<TableCell>
+                  {order.products.map((p, idx) => (
+                    <Tooltip key={idx} title="Click to view full process details">
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          cursor: "pointer",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "150px", // ✅ Show only 1 line
+                        }}
+                        onClick={() => setSelectedProcess(p.product?.productionProcess || "No details available")}
+                      >
+                        {p.product?.productionProcess || "No Details"}
+                      </Typography>
+                    </Tooltip>
+                  ))}
                 </TableCell>
+
 
                 <TableCell>
                   {order.products.map((p, idx) => (
@@ -172,9 +196,9 @@ const Production = () => {
                     <TextField
                       fullWidth
                       multiline
-                      minRows={2}
+                      minRows={1}
                       maxRows={6}
-                      placeholder="Add or update notes..."
+                      placeholder="Add notes..."
                       value={comments[order._id] || ""}
                       onChange={(e) => handleCommentChange(order._id, e.target.value)}
                       onBlur={() => handleUpdateComment(order._id)}
@@ -194,6 +218,18 @@ const Production = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+       {/* ✅ Modal for Full Production Process Details */}
+       <Modal open={Boolean(selectedProcess)} onClose={() => setSelectedProcess(null)}>
+        <Box sx={{
+          position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
+          bgcolor: "background.paper", p: 4, borderRadius: 2, width: 400
+        }}>
+          <Typography variant="h6" gutterBottom>Production Process Details</Typography>
+          <Typography variant="body1">{selectedProcess}</Typography>
+          <Button onClick={() => setSelectedProcess(null)} variant="contained" sx={{ mt: 2 }}>Close</Button>
+        </Box>
+      </Modal>
     </Container>
   );
 };
