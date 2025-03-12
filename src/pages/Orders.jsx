@@ -391,7 +391,7 @@ const handleUpdateStatus = async (id, status) => {
                 </TableCell>
                 <TableCell>{order.supplier?.name || order.customSupplier}</TableCell>
                 <TableCell>{order.estimatedArrival ? new Date(order.estimatedArrival).toLocaleDateString() : "N/A"}</TableCell>
-                <TableCell>${order.invoiceAmount.toFixed(2)}</TableCell>
+                <TableCell>€{order.invoiceAmount.toFixed(2)}</TableCell>
                 <TableCell>{order.paymentDueDate ? new Date(order.paymentDueDate).toLocaleDateString() : "N/A"}</TableCell>
                 <TableCell>{order.status}</TableCell>
                 {/* ✅ Progress Bar */}
