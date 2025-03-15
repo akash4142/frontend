@@ -105,7 +105,7 @@ const Products = () => {
       </Typography>
 
       {/* ✅ Admin Only: Add Product Button */}
-      {userRole === "admin" ? (
+      
         <Button
           variant="contained"
           color="primary"
@@ -119,9 +119,7 @@ const Products = () => {
         >
           + Add New Product
         </Button>
-      ) : (
-        <Typography variant="body2" color="gray">🔒 Admin Only</Typography>
-      )}
+    
 
       {/* ✅ Product Modal */}
       <ProductModal

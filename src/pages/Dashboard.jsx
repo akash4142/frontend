@@ -48,7 +48,7 @@ const Dashboard = () => {
           <Card sx={{ textAlign: "center", bgcolor: "red", color: "white", p: 2 }}>
             <CardContent>
               <EuroSymbol fontSize="large" />
-              <Typography variant="h6">Pending Payments (€)</Typography>
+              <Typography variant="h6">Pending Payments</Typography>
               <Typography variant="h4">€{stats.pendingPayments}</Typography>
             </CardContent>
           </Card>

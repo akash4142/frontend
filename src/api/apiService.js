@@ -43,7 +43,6 @@ export const addProduct = async (newProduct) => {
 // ✅ Fix API URL to include `/api/`
 export const updateProductionComments = async (id, comments) => {
   try {
-    console.log(`📡 API Request -> Updating Comment for ID: ${id}`, { comments });
     await axiosClient.put(`/api/production/${id}/comments`, { comments }); // ✅ FIXED URL
   } catch (error) {
     console.error("❌ Error updating comments:", error.response?.data || error.message);
@@ -319,6 +318,15 @@ export const deleteSupplier = async (id) => {
   } catch (error) {
     console.error(`❌ Error deleting supplier ${id}:`, error);
     throw error;
+  }
+};
+
+export const updateInvoiceNumber = async (orderId, invoiceNumber) => {
+  try {
+    await axiosClient.put(`/api/orders/${orderId}/update-invoice`, { invoiceNumber });
+  } catch (error) {
+    console.error("❌ Error updating invoice number:", error.response?.data || error.message);
+    throw new Error("Failed to update invoice number.");
   }
 };
 

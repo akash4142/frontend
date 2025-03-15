@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getOrders, updateOrderStatus,createOrder, getSuppliers, getProducts,  downloadPurchaseOrderPDF, downloadPurchaseOrdersExcel, sendOrderToProduction ,markOrderAsPaid } from "../api/apiService";
+import { getOrders, updateOrderStatus,createOrder, getSuppliers, getProducts,  downloadPurchaseOrderPDF, downloadPurchaseOrdersExcel, sendOrderToProduction ,markOrderAsPaid ,updateInvoiceNumber} from "../api/apiService";
 import { 
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody, 
   Paper, Button, Container, Typography, Modal, Box, TextField, Select, 
@@ -43,13 +43,13 @@ const [suppliers, setSuppliers] = useState([]);
 const [useCustomSupplier, setUseCustomSupplier] = useState(false);
 const [filters, setFilters] = useState({ productId: "", month: "", year: "" });
 const userRole =localStorage.getItem("role")
+const [invoiceEdits,setInvoiceEdits] = useState({});
 
 const [newOrder, setNewOrder] = useState({
   products: [{ product: "", quantity: 1 }],
   supplier: "",
   customSupplier: "",
   expectedArrival: "",
-  invoiceNumber:"",
 });
 
    useEffect(() => {
@@ -116,8 +116,7 @@ const handleCreateOrder = async () => {
   if (
     newOrder.products.length === 0 ||
     (!newOrder.supplier && !newOrder.customSupplier) ||
-    !newOrder.expectedArrival ||
-    !newOrder.invoiceNumber
+    !newOrder.expectedArrival 
   ) {
     alert("❌ Please fill in all required fields!");
     return;
@@ -129,7 +128,6 @@ const handleCreateOrder = async () => {
       supplier: useCustomSupplier ? null : newOrder.supplier,
       customSupplier: newOrder.customSupplier || null,
       expectedDelivery: newOrder.expectedArrival, // ✅ Change here
-      invoiceNumber: newOrder.invoiceNumber,
     });
 
     alert("✅ Order placed successfully!");
@@ -139,7 +137,6 @@ const handleCreateOrder = async () => {
       supplier: "",
       customSupplier: "",
       expectedArrival: "",
-      invoiceNumber: "",
     });
     fetchOrders();
   } catch (error) {
@@ -147,6 +144,22 @@ const handleCreateOrder = async () => {
   }
 };
 
+const handleInvoiceChange = async (orderId, newInvoice) => {
+  setInvoiceEdits((prev) => ({ ...prev, [orderId]: newInvoice }));
+
+    setTimeout(async () => {
+      try {
+        await updateInvoiceNumber(orderId, newInvoice);
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId ? { ...order, invoiceNumber: newInvoice } : order
+          )
+        );
+      } catch (error) {
+        alert("Failed to update invoice number.");
+      }
+    }, 1000); // ✅ Delay saving to reduce API calls
+};
 
 const handleSendToProduction = async (orderId) => {
   try {
@@ -266,15 +279,6 @@ const handleUpdateStatus = async (id, status) => {
 
           <TextField fullWidth type="date" label="Expected Arrival" InputLabelProps={{ shrink: true }} margin="normal" value={newOrder.expectedArrival} onChange={(e) => setNewOrder({ ...newOrder, expectedArrival: e.target.value })} />
 
-          <TextField
-            fullWidth
-            label="Invoice Number"
-            margin="normal"
-            value={newOrder.invoiceNumber}
-            onChange={(e) => setNewOrder({ ...newOrder, invoiceNumber: e.target.value })}
-          />
-
-
           <Button variant="contained" color="primary" onClick={handleCreateOrder} sx={{ mt: 2 }}>Place Order</Button>
         </Box>
       </Modal>
@@ -301,7 +305,21 @@ const handleUpdateStatus = async (id, status) => {
             {orders.map((order) => (
               <TableRow key={order._id}>
                 <TableCell>{order.orderNumber || order._id}</TableCell>
-                <TableCell>{order.invoiceNumber}</TableCell>
+                {/* ✅ Editable Invoice Number Input */}
+                <TableCell>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={{
+                      bgcolor: order.invoiceNumber ? "white" : "#ffcccb",
+                      fontWeight: order.invoiceNumber ? "bold" : "normal",
+                    }}
+                    placeholder="Pending"
+                    value={invoiceEdits[order._id] ?? order.invoiceNumber ?? ""}
+                    onChange={(e) => handleInvoiceChange(order._id, e.target.value)}
+                  />
+                </TableCell>
                 <TableCell>
                   {order.products.map((p, idx) => (
                     <div key={idx}>

@@ -255,7 +255,6 @@ const ProductDetails = () => {
   const [editing, setEditing] = useState(false);
   const [updatedProduct, setUpdatedProduct] = useState({});
   const [expandProcess, setExpandProcess] = useState(false);
-  const userRole = localStorage.getItem("role") || "public"; // ✅ Get user role
 
   useEffect(() => {
     fetchProductDetails();
@@ -287,9 +286,11 @@ const ProductDetails = () => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
       await deleteProduct(id);
+      alert("Order deleted successfully!")
       navigate("/products");
     } catch (error) {
       console.error("Error deleting product:", error);
+      alert("Failed to delete Order.")
     }
   };
 
@@ -425,16 +426,26 @@ const ProductDetails = () => {
                 </Box>
 
                 {/* ✅ Show Edit/Delete Buttons Only for Admins */}
-                 (
+                 
                   <Box sx={{ mt: 3, display: "flex", justifyContent: "center", gap: 2 }}>
-                    <Button variant="contained" sx={{ background: "#FFA000", ":hover": { background: "#FF8F00" } }}>
-                      <Edit sx={{ mr: 1 }} /> Edit
-                    </Button>
-                    <Button variant="contained" color="error">
-                      <Delete sx={{ mr: 1 }} /> Delete
-                    </Button>
+                  <Button 
+  variant="contained" 
+  sx={{ background: "#FFA000", ":hover": { background: "#FF8F00" } }} 
+  onClick={() => handleEdit(product._id)}
+>
+  <Edit sx={{ mr: 1 }} /> Edit 
+</Button>
+
+<Button 
+  variant="contained" 
+  color="error" 
+  onClick={() => handleDelete(product._id)}
+>
+  <Delete sx={{ mr: 1 }} /> Delete
+</Button>
+
                   </Box>
-                )
+                
               </>
             ) : null}
           </CardContent>
