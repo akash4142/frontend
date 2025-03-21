@@ -123,7 +123,9 @@ const Dashboard = () => {
           <TableHead sx={{ bgcolor: "#f57c00", color: "white" }}>
             <TableRow>
               <TableCell sx={{ color: "white" }}>Order ID</TableCell>
+              <TableCell sx={{ color: "white" }}>Invoice No.</TableCell>
               <TableCell sx={{ color: "white" }}>Products</TableCell>
+              <TableCell sx={{ color: "white" }}>Total Invoice (€)</TableCell>
               <TableCell sx={{ color: "white" }}>Production Stage</TableCell>
             </TableRow>
           </TableHead>
@@ -131,6 +133,7 @@ const Dashboard = () => {
             {stats.ordersInProduction.map((order) => (
               <TableRow key={order._id}>
                 <TableCell>{order.orderNumber || order._id}</TableCell>
+                <TableCell>{order.invoiceNumber}</TableCell>
                 <TableCell>
                   {order.products.map((p, idx) => (
                     <div key={idx}>
@@ -138,6 +141,7 @@ const Dashboard = () => {
                     </div>
                   ))}
                 </TableCell>
+                <TableCell>€{order.invoiceAmount.toFixed(2)}</TableCell>
                 <TableCell>{order.status}</TableCell>
               </TableRow>
             ))}

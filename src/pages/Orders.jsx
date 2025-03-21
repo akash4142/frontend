@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getOrders, updateOrderStatus,createOrder, getSuppliers, getProducts,  downloadPurchaseOrderPDF, downloadPurchaseOrdersExcel, sendOrderToProduction ,markOrderAsPaid ,updateInvoiceNumber} from "../api/apiService";
+import { getOrders, updateOrderStatus,createOrder, getSuppliers, getProducts,  downloadPurchaseOrderPDF, downloadPurchaseOrdersExcel, sendOrderToProduction ,markOrderAsPaid ,updateInvoiceNumber,updatePaymentDueDate} from "../api/apiService";
 import { 
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody, 
   Paper, Button, Container, Typography, Modal, Box, TextField, Select, 
@@ -180,7 +180,7 @@ const handleUpdateStatus = async (id, status) => {
   }
 };
 
-  const handleConfirmAction = async () => {
+const handleConfirmAction = async () => {
     const { action, orderId } = confirmDialog;
     setConfirmDialog({ open: false });
 
@@ -203,7 +203,21 @@ const handleUpdateStatus = async (id, status) => {
         alert("❌ Failed to cancel order.");
       }
     }
-  };
+};
+
+
+const [paymentEdits, setPaymentEdits] = useState({});
+
+const handlePaymentDateChange = async (orderId, newDate) => {
+  try {
+    setPaymentEdits((prev) => ({ ...prev, [orderId]: newDate }));
+    await updatePaymentDueDate(orderId, newDate); // Your API call
+    fetchOrders(); // Refresh if needed
+  } catch (error) {
+    console.error("❌ Failed to update payment due date:", error);
+  }
+};
+
 
   if (loading) return <Typography align="center" sx={{ mt: 4 }}>Loading...</Typography>;
 
@@ -330,7 +344,32 @@ const handleUpdateStatus = async (id, status) => {
                 <TableCell>{order.supplier?.name || order.customSupplier}</TableCell>
                 <TableCell>{order.estimatedArrival ? new Date(order.estimatedArrival).toLocaleDateString() : "N/A"}</TableCell>
                 <TableCell>€{order.invoiceAmount.toFixed(2)}</TableCell>
-                <TableCell>{order.paymentDueDate ? new Date(order.paymentDueDate).toLocaleDateString() : "N/A"}</TableCell>
+                <TableCell>
+  <TextField
+    type="date"
+    fullWidth
+    size="small"
+    value={
+      paymentEdits[order._id] ??
+      (order.paymentDueDate
+        ? new Date(order.paymentDueDate).toISOString().split("T")[0]
+        : "")
+    }
+    onChange={(e) => handlePaymentDateChange(order._id, e.target.value)}
+    sx={{
+      bgcolor: "#f9f9f9",
+      borderRadius: 1,
+      "& .MuiInputBase-input": {
+        padding: "6px 8px", // tighter padding for smaller height
+        fontSize: "0.85rem", // slightly smaller text
+      },
+    }}
+  />
+</TableCell>
+
+
+
+                
                 <TableCell>{order.status}</TableCell>
                 {/* ✅ Progress Bar */}
                 <TableCell>
@@ -353,7 +392,7 @@ const handleUpdateStatus = async (id, status) => {
   {/* ✅ Download PDF */}
   
   <Tooltip title="Download Purchase Order">
-    <Button variant="contained" color="secondary" sx={{ mr: 1 }} onClick={() => downloadPurchaseOrderPDF(order._id)}>
+    <Button variant="contained" color="secondary" sx={{ mr: 1 }} onClick={() => downloadPurchaseOrderPDF(order._id, order.orderNumber)}>
       Download PDF
     </Button>
   </Tooltip>

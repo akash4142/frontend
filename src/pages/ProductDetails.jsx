@@ -1,3 +1,4 @@
+
 // import { useEffect, useState } from "react";
 // import { useParams, useNavigate } from "react-router-dom";
 // import { getProductById, updateProduct, deleteProduct } from "../api/apiService";
@@ -10,9 +11,34 @@
 //   TextField,
 //   Box,
 //   Grid,
+//   Divider,
+//   IconButton,
+//   Collapse,
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableContainer,
+//   TableRow,
+//   Paper,
+//   Dialog,
+//   DialogTitle,DialogContent,DialogActions
 // } from "@mui/material";
 // import { motion } from "framer-motion";
-// import { Edit, Delete, Save, Cancel, ArrowBack, Ballot, AttachMoney, Category } from "@mui/icons-material";
+// import {
+//   Edit,
+//   Delete,
+//   Save,
+//   Cancel,
+//   ArrowBack,
+//   Ballot,
+//   AttachMoney,
+//   Category,
+//   ExpandMore,
+//   ExpandLess,
+//   Info,
+//   Inventory,
+//   LocalShipping,
+// } from "@mui/icons-material";
 
 // const ProductDetails = () => {
 //   const { id } = useParams();
@@ -21,6 +47,7 @@
 //   const [loading, setLoading] = useState(true);
 //   const [editing, setEditing] = useState(false);
 //   const [updatedProduct, setUpdatedProduct] = useState({});
+//   const [expandProcess, setExpandProcess] = useState(false);
 
 //   useEffect(() => {
 //     fetchProductDetails();
@@ -52,9 +79,11 @@
 //     if (!window.confirm("Are you sure you want to delete this product?")) return;
 //     try {
 //       await deleteProduct(id);
+//       alert("Order deleted successfully!")
 //       navigate("/products");
 //     } catch (error) {
 //       console.error("Error deleting product:", error);
+//       alert("Failed to delete Order.")
 //     }
 //   };
 
@@ -74,7 +103,7 @@
 //       >
 //         <Card
 //           sx={{
-//             maxWidth: 750,
+//             maxWidth: 900,
 //             mx: "auto",
 //             p: 4,
 //             boxShadow: 4,
@@ -87,6 +116,7 @@
 //           <CardContent>
 //             {!editing ? (
 //               <>
+//                 {/* Product Name */}
 //                 <Typography
 //                   variant="h4"
 //                   gutterBottom
@@ -100,114 +130,244 @@
 //                   {product.name}
 //                 </Typography>
 
-//                 <Grid container spacing={2}>
-//                   <Grid item xs={6}>
-//                     <Typography sx={{ fontSize: "18px", fontFamily: "Montserrat, sans-serif", color: "#444" }}>
-//                       <Ballot sx={{ color: "#FF9800" }} /> <strong>ASIN:</strong> {product.ASIN}
-//                     </Typography>
-//                     <Typography sx={{ fontSize: "18px", fontFamily: "Montserrat, sans-serif", color: "#444" }}>
-//                       <Category sx={{ color: "#FF9800" }} /> <strong>SKU:</strong> {product.SKU}
-//                     </Typography>
-//                     <Typography sx={{ fontSize: "18px", fontFamily: "Montserrat, sans-serif", color: "#444" }}>
-//                       <strong>Manufacturer:</strong> {product.manufacturerReference}
-//                     </Typography>
-//                   </Grid>
-//                   <Grid item xs={6}>
-//                     <Typography sx={{ fontSize: "18px", fontFamily: "Montserrat, sans-serif", color: "#444" }}>
-//                       <AttachMoney sx={{ color: "#4CAF50" }} /> <strong>Price:</strong> ${product.price}
-//                     </Typography>
-//                     <Typography sx={{ fontSize: "18px", fontFamily: "Montserrat, sans-serif", color: "#444" }}>
-//                       <strong>Packaging Type:</strong> {product.packagingType}
-//                     </Typography>
-//                     <Typography sx={{ fontSize: "18px", fontFamily: "Montserrat, sans-serif", color: "#444" }}>
-//                       <strong>Required Materials:</strong> {product.requiredMaterials?.join(", ") || "N/A"}
-//                     </Typography>
-//                   </Grid>
-//                 </Grid>
+//                 <Divider sx={{ my: 2 }} />
 
-//                 <Box sx={{ mt: 3, display: "flex", justifyContent: "center", gap: 2 }}>
-//                   <Button
-//                     onClick={() => setEditing(true)}
-//                     variant="contained"
+//                 {/* Product Details in Table Format */}
+//                 <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
+//                   <Table>
+//                     <TableBody>
+//                       <TableRow>
+//                         <TableCell sx={{ fontWeight: "bold", width: "35%" }}>
+//                           <Ballot sx={{ color: "#FF9800", mr: 1 }} />
+//                           ASIN:
+//                         </TableCell>
+//                         <TableCell>{product.ASIN}</TableCell>
+//                       </TableRow>
+
+//                       <TableRow>
+//                         <TableCell sx={{ fontWeight: "bold" }}>
+//                           <Category sx={{ color: "#FF9800", mr: 1 }} />
+//                           SKU:
+//                         </TableCell>
+//                         <TableCell>{product.SKU}</TableCell>
+//                       </TableRow>
+
+//                       <TableRow>
+//                         <TableCell sx={{ fontWeight: "bold" }}>
+//                           <Info sx={{ color: "#4CAF50", mr: 1 }} />
+//                           Manufacturer:
+//                         </TableCell>
+//                         <TableCell>{product.manufacturerReference}</TableCell>
+//                       </TableRow>
+
+//                       <TableRow>
+//                         <TableCell sx={{ fontWeight: "bold" }}>
+//                           <AttachMoney sx={{ color: "#4CAF50", mr: 1 }} />
+//                           Price:
+//                         </TableCell>
+//                         <TableCell>${product.price}</TableCell>
+//                       </TableRow>
+
+//                       <TableRow>
+//                         <TableCell sx={{ fontWeight: "bold" }}>
+//                           <LocalShipping sx={{ color: "#1976D2", mr: 1 }} />
+//                           Packaging Type:
+//                         </TableCell>
+//                         <TableCell>{product.packagingType}</TableCell>
+//                       </TableRow>
+
+//                       <TableRow>
+//                         <TableCell sx={{ fontWeight: "bold" }}>
+//                           <Inventory sx={{ color: "#673ab7", mr: 1 }} />
+//                           Required Materials:
+//                         </TableCell>
+//                         <TableCell>{product.requiredMaterials?.join(", ") || "N/A"}</TableCell>
+//                       </TableRow>
+//                     </TableBody>
+//                   </Table>
+//                 </TableContainer>
+
+//                 <Divider sx={{ my: 2 }} />
+
+//                 {/* Expandable Production Process Section */}
+//                 <Box sx={{ mt: 3 }}>
+//                   <Typography
 //                     sx={{
-//                       background: "#FFA000",
-//                       ":hover": { background: "#FF8F00" },
-//                       fontFamily: "Raleway, sans-serif",
+//                       fontSize: "18px",
+//                       fontFamily: "Montserrat, sans-serif",
+//                       color: "#444",
+//                       cursor: "pointer",
+//                       display: "flex",
+//                       alignItems: "center",
+//                       justifyContent: "space-between",
+//                       bgcolor: "#f5f5f5",
+//                       p: 2,
+//                       borderRadius: "5px",
 //                     }}
+//                     onClick={() => setExpandProcess(!expandProcess)}
 //                   >
-//                     <Edit sx={{ mr: 1 }} /> Edit
-//                   </Button>
-//                   <Button
-//                     onClick={handleDelete}
-//                     variant="contained"
-//                     color="error"
-//                     sx={{ fontFamily: "Raleway, sans-serif" }}
-//                   >
-//                     <Delete sx={{ mr: 1 }} /> Delete
-//                   </Button>
+//                     <strong>Production Process:</strong> {expandProcess ? <ExpandLess /> : <ExpandMore />}
+//                   </Typography>
+
+//                   <Collapse in={expandProcess} timeout="auto" unmountOnExit>
+//                     <Box sx={{ bgcolor: "#f0f0f0", p: 2, mt: 1, borderRadius: "5px" }}>
+//                       <Typography sx={{ fontSize: "16px", fontFamily: "Montserrat, sans-serif", color: "#333" }}>
+//                         {product.productionProcess || "No production process details available."}
+//                       </Typography>
+//                     </Box>
+//                   </Collapse>
 //                 </Box>
+
+
+
+
+//                 <Dialog open={editing} onClose={() => setEditing(false)} fullWidth maxWidth="sm">
+//   <DialogTitle>Edit Product</DialogTitle>
+//   <DialogContent dividers>
+//     <Grid container spacing={2}>
+//       <Grid item xs={12}>
+//         <TextField
+//           label="Name"
+//           fullWidth
+//           value={updatedProduct.name || ""}
+//           onChange={(e) => setUpdatedProduct({ ...updatedProduct, name: e.target.value })}
+//         />
+//       </Grid>
+
+//       <Grid item xs={6}>
+//         <TextField
+//           label="ASIN"
+//           fullWidth
+//           value={updatedProduct.ASIN || ""}
+//           onChange={(e) => setUpdatedProduct({ ...updatedProduct, ASIN: e.target.value })}
+//         />
+//       </Grid>
+
+//       <Grid item xs={6}>
+//         <TextField
+//           label="SKU"
+//           fullWidth
+//           value={updatedProduct.SKU || ""}
+//           onChange={(e) => setUpdatedProduct({ ...updatedProduct, SKU: e.target.value })}
+//         />
+//       </Grid>
+
+//       <Grid item xs={12}>
+//         <TextField
+//           label="Manufacturer Reference"
+//           fullWidth
+//           value={updatedProduct.manufacturerReference || ""}
+//           onChange={(e) =>
+//             setUpdatedProduct({ ...updatedProduct, manufacturerReference: e.target.value })
+//           }
+//         />
+//       </Grid>
+
+//       <Grid item xs={6}>
+//         <TextField
+//           label="Price"
+//           type="number"
+//           fullWidth
+//           value={updatedProduct.price || ""}
+//           onChange={(e) => setUpdatedProduct({ ...updatedProduct, price: e.target.value })}
+//         />
+//       </Grid>
+
+//       <Grid item xs={6}>
+//         <TextField
+//           label="Packaging Type"
+//           fullWidth
+//           value={updatedProduct.packagingType || ""}
+//           onChange={(e) => setUpdatedProduct({ ...updatedProduct, packagingType: e.target.value })}
+//         />
+//       </Grid>
+
+//       <Grid item xs={12}>
+//         <TextField
+//           label="Required Materials (comma-separated)"
+//           fullWidth
+//           value={updatedProduct.requiredMaterials?.join(", ") || ""}
+//           onChange={(e) =>
+//             setUpdatedProduct({
+//               ...updatedProduct,
+//               requiredMaterials: e.target.value.split(",").map((mat) => mat.trim()),
+//             })
+//           }
+//         />
+//       </Grid>
+
+//       <Grid item xs={12}>
+//         <TextField
+//           label="Production Process"
+//           multiline
+//           fullWidth
+//           minRows={3}
+//           value={updatedProduct.productionProcess || ""}
+//           onChange={(e) =>
+//             setUpdatedProduct({ ...updatedProduct, productionProcess: e.target.value })
+//           }
+//         />
+//       </Grid>
+//     </Grid>
+//   </DialogContent>
+
+//   <DialogActions>
+//     <Button onClick={() => setEditing(false)} color="inherit">
+//       Cancel
+//     </Button>
+//     <Button onClick={handleEdit} variant="contained" color="primary">
+//       Save
+//     </Button>
+//   </DialogActions>
+// </Dialog>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//                 {/* ✅ Show Edit/Delete Buttons Only for Admins */}
+                 
+//                   <Box sx={{ mt: 3, display: "flex", justifyContent: "center", gap: 2 }}>
+//                   <Button 
+//   variant="contained" 
+//   sx={{ background: "#FFA000", ":hover": { background: "#FF8F00" } }} 
+//   onClick={() => setEditing(true)}
+// >
+//   <Edit sx={{ mr: 1 }} /> Edit 
+// </Button>
+
+// <Button 
+//   variant="contained" 
+//   color="error" 
+//   onClick={() => handleDelete(product._id)}
+// >
+//   <Delete sx={{ mr: 1 }} /> Delete
+// </Button>
+
+//                   </Box>
+                
 //               </>
-//             ) : (
-//               <Box>
-//                 <TextField
-//                   label="Product Name"
-//                   fullWidth
-//                   margin="normal"
-//                   value={updatedProduct.name}
-//                   onChange={(e) => setUpdatedProduct({ ...updatedProduct, name: e.target.value })}
-//                   sx={{ background: "white", borderRadius: "5px", fontFamily: "Montserrat, sans-serif" }}
-//                 />
-//                 <TextField
-//                   label="Production Process"
-//                   fullWidth
-//                   margin="normal"
-//                   value={updatedProduct.productionProcess}
-//                   onChange={(e) => setUpdatedProduct({ ...updatedProduct, productionProcess: e.target.value })}
-//                   sx={{ background: "white", borderRadius: "5px", fontFamily: "Montserrat, sans-serif" }}
-//                 />
-//                 <TextField
-//                   label="Packaging Type"
-//                   fullWidth
-//                   margin="normal"
-//                   value={updatedProduct.packagingType}
-//                   onChange={(e) => setUpdatedProduct({ ...updatedProduct, packagingType: e.target.value })}
-//                   sx={{ background: "white", borderRadius: "5px", fontFamily: "Montserrat, sans-serif" }}
-//                 />
-//                 <Box sx={{ mt: 3, display: "flex", justifyContent: "center", gap: 2 }}>
-//                   <Button onClick={handleEdit} variant="contained" color="success">
-//                     <Save sx={{ mr: 1 }} /> Save
-//                   </Button>
-//                   <Button onClick={() => setEditing(false)} variant="contained" color="secondary">
-//                     <Cancel sx={{ mr: 1 }} /> Cancel
-//                   </Button>
-//                 </Box>
-//               </Box>
-//             )}
+//             ) : null}
 //           </CardContent>
 //         </Card>
 //       </motion.div>
-
-//       <Button
-//         onClick={() => navigate("/products")}
-//         variant="outlined"
-//         sx={{
-//           mt: 4,
-//           display: "block",
-//           mx: "auto",
-//           color: "#fff",
-//           backgroundColor: "#1976D2",
-//           ":hover": { backgroundColor: "#1565C0" },
-//           fontFamily: "Raleway, sans-serif",
-//         }}
-//       >
-//         <ArrowBack sx={{ mr: 1 }} /> Back to Products
-//       </Button>
 //     </Container>
 //   );
 // };
 
 // export default ProductDetails;
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProductById, updateProduct, deleteProduct } from "../api/apiService";
@@ -221,16 +381,18 @@ import {
   Box,
   Grid,
   Divider,
-  IconButton,
-  Collapse,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableRow,
   Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Collapse,
 } from "@mui/material";
-import { motion } from "framer-motion";
 import {
   Edit,
   Delete,
@@ -246,14 +408,15 @@ import {
   Inventory,
   LocalShipping,
 } from "@mui/icons-material";
+import { motion } from "framer-motion";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
+  const [updatedProduct, setUpdatedProduct] = useState({});
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
-  const [updatedProduct, setUpdatedProduct] = useState({});
   const [expandProcess, setExpandProcess] = useState(false);
 
   useEffect(() => {
@@ -286,28 +449,25 @@ const ProductDetails = () => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
       await deleteProduct(id);
-      alert("Order deleted successfully!")
+      alert("Product deleted successfully!");
       navigate("/products");
     } catch (error) {
       console.error("Error deleting product:", error);
-      alert("Failed to delete Order.")
+      alert("Failed to delete product.");
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
       <Typography align="center" sx={{ mt: 4, fontSize: "22px", fontWeight: "bold", fontFamily: "Montserrat, sans-serif" }}>
         Loading product details...
       </Typography>
     );
+  }
 
   return (
     <Container sx={{ mt: 4 }}>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-      >
+      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
         <Card
           sx={{
             maxWidth: 900,
@@ -321,136 +481,204 @@ const ProductDetails = () => {
           }}
         >
           <CardContent>
-            {!editing ? (
-              <>
-                {/* Product Name */}
-                <Typography
-                  variant="h4"
-                  gutterBottom
-                  sx={{
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    fontFamily: "Raleway, sans-serif",
-                    color: "#1976D2",
-                  }}
-                >
-                  {product.name}
-                </Typography>
+            <Typography variant="h4" gutterBottom sx={{ textAlign: "center", fontWeight: "bold", fontFamily: "Raleway, sans-serif", color: "#1976D2" }}>
+              {product.name}
+            </Typography>
 
-                <Divider sx={{ my: 2 }} />
+            <Divider sx={{ my: 2 }} />
 
-                {/* Product Details in Table Format */}
-                <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
-                  <Table>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell sx={{ fontWeight: "bold", width: "35%" }}>
-                          <Ballot sx={{ color: "#FF9800", mr: 1 }} />
-                          ASIN:
-                        </TableCell>
-                        <TableCell>{product.ASIN}</TableCell>
-                      </TableRow>
+            <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "bold", width: "35%" }}><Ballot sx={{ color: "#FF9800", mr: 1 }} /> ASIN:</TableCell>
+                    <TableCell>{product.ASIN}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "bold" }}><Category sx={{ color: "#FF9800", mr: 1 }} /> SKU:</TableCell>
+                    <TableCell>{product.SKU}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "bold" }}><Info sx={{ color: "#4CAF50", mr: 1 }} /> Manufacturer:</TableCell>
+                    <TableCell>{product.manufacturerReference}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "bold" }}><AttachMoney sx={{ color: "#4CAF50", mr: 1 }} /> Price:</TableCell>
+                    <TableCell>${product.price}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "bold" }}><LocalShipping sx={{ color: "#1976D2", mr: 1 }} /> Packaging Type:</TableCell>
+                    <TableCell>{product.packagingType}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "bold" }}><Inventory sx={{ color: "#673ab7", mr: 1 }} /> Required Materials:</TableCell>
+                    <TableCell>{product.requiredMaterials?.join(", ") || "N/A"}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
 
-                      <TableRow>
-                        <TableCell sx={{ fontWeight: "bold" }}>
-                          <Category sx={{ color: "#FF9800", mr: 1 }} />
-                          SKU:
-                        </TableCell>
-                        <TableCell>{product.SKU}</TableCell>
-                      </TableRow>
+            <Divider sx={{ my: 2 }} />
 
-                      <TableRow>
-                        <TableCell sx={{ fontWeight: "bold" }}>
-                          <Info sx={{ color: "#4CAF50", mr: 1 }} />
-                          Manufacturer:
-                        </TableCell>
-                        <TableCell>{product.manufacturerReference}</TableCell>
-                      </TableRow>
+            {/* Expandable Production Process */}
+            <Box sx={{ mt: 3 }}>
+              <Typography
+                sx={{
+                  fontSize: "18px",
+                  fontFamily: "Montserrat, sans-serif",
+                  color: "#444",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  bgcolor: "#f5f5f5",
+                  p: 2,
+                  borderRadius: "5px",
+                }}
+                onClick={() => setExpandProcess(!expandProcess)}
+              >
+                <strong>Production Process:</strong> {expandProcess ? <ExpandLess /> : <ExpandMore />}
+              </Typography>
 
-                      <TableRow>
-                        <TableCell sx={{ fontWeight: "bold" }}>
-                          <AttachMoney sx={{ color: "#4CAF50", mr: 1 }} />
-                          Price:
-                        </TableCell>
-                        <TableCell>${product.price}</TableCell>
-                      </TableRow>
-
-                      <TableRow>
-                        <TableCell sx={{ fontWeight: "bold" }}>
-                          <LocalShipping sx={{ color: "#1976D2", mr: 1 }} />
-                          Packaging Type:
-                        </TableCell>
-                        <TableCell>{product.packagingType}</TableCell>
-                      </TableRow>
-
-                      <TableRow>
-                        <TableCell sx={{ fontWeight: "bold" }}>
-                          <Inventory sx={{ color: "#673ab7", mr: 1 }} />
-                          Required Materials:
-                        </TableCell>
-                        <TableCell>{product.requiredMaterials?.join(", ") || "N/A"}</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-
-                <Divider sx={{ my: 2 }} />
-
-                {/* Expandable Production Process Section */}
-                <Box sx={{ mt: 3 }}>
-                  <Typography
-                    sx={{
-                      fontSize: "18px",
-                      fontFamily: "Montserrat, sans-serif",
-                      color: "#444",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      bgcolor: "#f5f5f5",
-                      p: 2,
-                      borderRadius: "5px",
-                    }}
-                    onClick={() => setExpandProcess(!expandProcess)}
-                  >
-                    <strong>Production Process:</strong> {expandProcess ? <ExpandLess /> : <ExpandMore />}
+              <Collapse in={expandProcess} timeout="auto" unmountOnExit>
+                <Box sx={{ bgcolor: "#f0f0f0", p: 2, mt: 1, borderRadius: "5px" }}>
+                  <Typography sx={{ fontSize: "16px", fontFamily: "Montserrat, sans-serif", color: "#333" }}>
+                    {product.productionProcess || "No production process details available."}
                   </Typography>
-
-                  <Collapse in={expandProcess} timeout="auto" unmountOnExit>
-                    <Box sx={{ bgcolor: "#f0f0f0", p: 2, mt: 1, borderRadius: "5px" }}>
-                      <Typography sx={{ fontSize: "16px", fontFamily: "Montserrat, sans-serif", color: "#333" }}>
-                        {product.productionProcess || "No production process details available."}
-                      </Typography>
-                    </Box>
-                  </Collapse>
                 </Box>
+              </Collapse>
+            </Box>
 
-                {/* ✅ Show Edit/Delete Buttons Only for Admins */}
-                 
-                  <Box sx={{ mt: 3, display: "flex", justifyContent: "center", gap: 2 }}>
-                  <Button 
-  variant="contained" 
-  sx={{ background: "#FFA000", ":hover": { background: "#FF8F00" } }} 
-  onClick={() => handleEdit(product._id)}
->
-  <Edit sx={{ mr: 1 }} /> Edit 
-</Button>
+            {/* Buttons */}
+            <Box sx={{ mt: 3, display: "flex", justifyContent: "center", gap: 2 }}>
+              <Button
+                variant="contained"
+                sx={{ background: "#FFA000", ":hover": { background: "#FF8F00" } }}
+                onClick={() => setEditing(true)}
+              >
+                <Edit sx={{ mr: 1 }} /> Edit
+              </Button>
 
-<Button 
-  variant="contained" 
-  color="error" 
-  onClick={() => handleDelete(product._id)}
->
-  <Delete sx={{ mr: 1 }} /> Delete
-</Button>
-
-                  </Box>
-                
-              </>
-            ) : null}
+              <Button variant="contained" color="error" onClick={handleDelete}>
+                <Delete sx={{ mr: 1 }} /> Delete
+              </Button>
+            </Box>
           </CardContent>
         </Card>
       </motion.div>
+
+      <Button
+        onClick={() => navigate("/products")}
+        variant="outlined"
+        sx={{
+          mt: 4,
+          display: "block",
+          mx: "auto",
+          color: "#fff",
+          backgroundColor: "#1976D2",
+          ":hover": { backgroundColor: "#1565C0" },
+          fontFamily: "Raleway, sans-serif",
+        }}
+      >
+        <ArrowBack sx={{ mr: 1 }} /> Back to Products
+      </Button>
+
+      {/* 🛠️ EDIT DIALOG */}
+      <Dialog open={editing} onClose={() => setEditing(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Edit Product</DialogTitle>
+        <DialogContent dividers>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                label="Name"
+                fullWidth
+                value={updatedProduct.name || ""}
+                onChange={(e) => setUpdatedProduct({ ...updatedProduct, name: e.target.value })}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="ASIN"
+                fullWidth
+                value={updatedProduct.ASIN || ""}
+                onChange={(e) => setUpdatedProduct({ ...updatedProduct, ASIN: e.target.value })}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="SKU"
+                fullWidth
+                value={updatedProduct.SKU || ""}
+                onChange={(e) => setUpdatedProduct({ ...updatedProduct, SKU: e.target.value })}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                label="Manufacturer Reference"
+                fullWidth
+                value={updatedProduct.manufacturerReference || ""}
+                onChange={(e) => setUpdatedProduct({ ...updatedProduct, manufacturerReference: e.target.value })}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="Price"
+                type="number"
+                fullWidth
+                value={updatedProduct.price || ""}
+                onChange={(e) => setUpdatedProduct({ ...updatedProduct, price: e.target.value })}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="Packaging Type"
+                fullWidth
+                value={updatedProduct.packagingType || ""}
+                onChange={(e) => setUpdatedProduct({ ...updatedProduct, packagingType: e.target.value })}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                label="Required Materials (comma-separated)"
+                fullWidth
+                value={updatedProduct.requiredMaterials?.join(", ") || ""}
+                onChange={(e) =>
+                  setUpdatedProduct({
+                    ...updatedProduct,
+                    requiredMaterials: e.target.value.split(",").map((mat) => mat.trim()),
+                  })
+                }
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                label="Production Process"
+                multiline
+                fullWidth
+                minRows={3}
+                value={updatedProduct.productionProcess || ""}
+                onChange={(e) => setUpdatedProduct({ ...updatedProduct, productionProcess: e.target.value })}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setEditing(false)} color="inherit">
+            Cancel
+          </Button>
+          <Button onClick={handleEdit} variant="contained" color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

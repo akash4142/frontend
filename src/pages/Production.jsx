@@ -96,6 +96,7 @@ const Production = () => {
               <TableCell sx={{ color: "white" }}>Product Details</TableCell>
               <TableCell sx={{ color: "white" }}>Quantity</TableCell>
               <TableCell sx={{ color: "white" }}>Packaging Process</TableCell>
+              <TableCell sx={{color : "white" }}>Accessories</TableCell>
               <TableCell sx={{ color: "white" }}>Packaging Details</TableCell>
               <TableCell sx={{ color: "white" }}>Master Box Units</TableCell>
               <TableCell sx={{ color: "white" }}>Status</TableCell>
@@ -104,7 +105,7 @@ const Production = () => {
             </TableRow>
           </TableHead>
 
-          <TableBody>
+          {/* <TableBody>
             {productionOrders.map((order) => (
               <motion.tr key={order._id} whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                 <TableCell>{order.orderId?.orderNumber || "N/A"}</TableCell>
@@ -124,7 +125,7 @@ const Production = () => {
                 </TableCell>
 
           
-{/* ✅ Packaging Process: Truncated Text + Tooltip + Modal */}
+
 <TableCell>
                   {order.products.map((p, idx) => (
                     <Tooltip key={idx} title="Click to view full process details">
@@ -144,6 +145,27 @@ const Production = () => {
                     </Tooltip>
                   ))}
                 </TableCell>
+
+                <TableCell>
+  {order.products.map((p, idx) => (
+    <div key={idx}>
+      {p.product?.requiredMaterials?.length > 0 ? (
+        p.product.requiredMaterials.map((material, i) => (
+          <Chip
+            key={i}
+            label={material}
+            size="small"
+            sx={{ m: 0.3 }}
+          />
+        ))
+      ) : (
+        <Typography variant="body2" color="textSecondary">
+          No Accessories
+        </Typography>
+      )}
+    </div>
+  ))}
+</TableCell>
 
 
                 <TableCell>
@@ -208,11 +230,166 @@ const Production = () => {
                 </TableCell>
               </motion.tr>
             ))}
-          </TableBody>
+          </TableBody> */}
+
+<TableBody>
+  {productionOrders.map((order) => (
+    <motion.tr
+      key={order._id}
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.2 }}
+    >
+      <TableCell>{order.orderId?.orderNumber || "N/A"}</TableCell>
+
+      {/* Product Names */}
+      <TableCell>
+        {order.products.map((p, idx) => (
+          <Typography key={idx} fontWeight={600} variant="body2">
+            {p.product?.name || "Deleted Product"}
+          </Typography>
+        ))}
+      </TableCell>
+
+      {/* Quantities */}
+      <TableCell>
+        {order.products.map((p, idx) => (
+          <Typography key={idx} variant="body2">
+            {p.quantity} pcs
+          </Typography>
+        ))}
+      </TableCell>
+
+      {/* Production Process with Tooltip + Modal Trigger */}
+      <TableCell>
+        {order.products.map((p, idx) => (
+          <Tooltip key={idx} title="Click to view full process details">
+            <Typography
+              variant="body2"
+              sx={{
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "160px",
+                mb: 0.5,
+              }}
+              onClick={() =>
+                setSelectedProcess(p.product?.productionProcess || "No details available")
+              }
+            >
+              {p.product?.productionProcess || "No Details"}
+            </Typography>
+          </Tooltip>
+        ))}
+      </TableCell>
+
+      {/* Accessories (requiredMaterials) as Chips */}
+      <TableCell>
+        {order.products.map((p, idx) => (
+          <Box key={idx} sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mb: 1 }}>
+            {p.product?.requiredMaterials?.length > 0 ? (
+              p.product.requiredMaterials.map((material, i) => (
+                <Chip key={i} label={material} size="small" />
+              ))
+            ) : (
+              <Typography variant="body2" color="textSecondary">
+                No Accessories
+              </Typography>
+            )}
+          </Box>
+        ))}
+      </TableCell>
+
+      {/* Packaging Type */}
+      <TableCell>
+        {order.products.map((p, idx) => (
+          <Typography key={idx} variant="body2" sx={{ mb: 0.5 }}>
+            {p.product?.packagingType || "N/A"}
+          </Typography>
+        ))}
+      </TableCell>
+
+      {/* Master Box Quantity */}
+      <TableCell>
+        {order.products.map((p, idx) => (
+          <Typography key={idx} variant="body2" sx={{ mb: 0.5 }}>
+            {p.product?.quantityPerMasterBox || "N/A"} units
+          </Typography>
+        ))}
+      </TableCell>
+
+      {/* Status Chip */}
+      <TableCell>
+        <Chip
+          label={order.status}
+          sx={{
+            bgcolor: getStatusColor(order.status),
+            color: "white",
+            fontWeight: "bold",
+          }}
+        />
+      </TableCell>
+
+      {/* Status Action Buttons */}
+      <TableCell>
+        {order.status === "In Production" && (
+          <Tooltip title="Move to Packaging">
+            <Button
+              variant="contained"
+              color="warning"
+              size="small"
+              onClick={() => handleUpdateStatus(order._id, "Packaging")}
+              sx={{ mb: 1 }}
+            >
+              <LocalShipping fontSize="small" sx={{ mr: 0.5 }} /> Move
+            </Button>
+          </Tooltip>
+        )}
+        {order.status === "Packaging" && (
+          <Tooltip title="Mark as Completed">
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              onClick={() => handleUpdateStatus(order._id, "Completed")}
+            >
+              <CheckCircle fontSize="small" sx={{ mr: 0.5 }} /> Complete
+            </Button>
+          </Tooltip>
+        )}
+      </TableCell>
+
+      {/* Admin Comments (Editable) */}
+      <TableCell>
+        {userRole === "admin" ? (
+          <TextField
+            fullWidth
+            multiline
+            minRows={1}
+            maxRows={4}
+            placeholder="Add notes..."
+            value={comments[order._id] || ""}
+            onChange={(e) => handleCommentChange(order._id, e.target.value)}
+            onBlur={() => handleUpdateComment(order._id)}
+            sx={{
+              fontSize: "12px",
+              "& .MuiInputBase-input": { fontSize: "12px" },
+            }}
+          />
+        ) : (
+          <Typography variant="body2" sx={{ fontSize: "12px", color: "gray" }}>
+            {comments[order._id] || "No Comments"}
+          </Typography>
+        )}
+      </TableCell>
+    </motion.tr>
+  ))}
+</TableBody>
+
         </Table>
       </TableContainer>
 
-       {/* ✅ Modal for Full Production Process Details */}
+       
        <Modal open={Boolean(selectedProcess)} onClose={() => setSelectedProcess(null)}>
         <Box sx={{
           position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",

@@ -161,7 +161,7 @@ export const updateOrderStatus = async (id, status) => {
   }
 };
 
-export const downloadPurchaseOrderPDF = async (orderId) => {
+export const downloadPurchaseOrderPDF = async (orderId , orderNumber) => {
   try {
     const response = await axiosClient.get(`/api/orders/${orderId}/generate-pdf`, { responseType: "blob" });
 
@@ -175,7 +175,7 @@ export const downloadPurchaseOrderPDF = async (orderId) => {
     // ✅ Create Download Link
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `Invoice_${orderId}.pdf`);
+    link.setAttribute("download", `Purchase_Order_${orderNumber || orderId}.pdf`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -331,3 +331,15 @@ export const updateInvoiceNumber = async (orderId, invoiceNumber) => {
 };
 
 
+export const updatePaymentDueDate = async (orderId, newDate) => {
+  try {
+    const response = await axiosClient.put(`/api/orders/${orderId}/update-payment-date`, {
+      paymentDueDate: newDate,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error updating payment due date:", error);
+    throw new Error("Failed to update payment due date.");
+  }
+};
